@@ -1,0 +1,228 @@
+<!-- new_form.html -->
+{% extends 'base.html' %}
+{% block script %}
+  <script>
+    function addInputField() {
+      var new_field_div = document.createElement('div')
+      new_field_div.setAttribute('class', 'border border-gray-300 rounded-md p-5 m-2 flex flex-col')
+    
+      const new_field_type = document.createElement('select')
+      new_field_type.setAttribute('name', 'type')
+      new_field_type.setAttribute('class', 'select select-primary w-72')
+      new_field_type.setAttribute('onchange', 'changeFieldType(this)')
+    
+      const option1 = document.createElement('option')
+      option1.setAttribute('value', 'text')
+      option1.innerHTML = 'Text'
+      const option2 = document.createElement('option')
+      option2.setAttribute('value', 'number')
+      option2.innerHTML = 'Number'
+      const option3 = document.createElement('option')
+      option3.setAttribute('value', 'date')
+      option3.innerHTML = 'Date'
+      const option4 = document.createElement('option')
+      option4.setAttribute('value', 'email')
+      option4.innerHTML = 'Email'
+      const option5 = document.createElement('option')
+      option5.setAttribute('value', 'password')
+      option5.innerHTML = 'Password'
+      const option6 = document.createElement('option')
+      option6.setAttribute('value', 'textarea')
+      option6.innerHTML = 'Textarea'
+      const option7 = document.createElement('option')
+      option7.setAttribute('value', 'select')
+      option7.innerHTML = 'Select'
+      const option8 = document.createElement('option')
+      option8.setAttribute('value', 'checkbox')
+      option8.innerHTML = 'Checkbox'
+      const option9 = document.createElement('option')
+      option9.setAttribute('value', 'radio')
+      option9.innerHTML = 'Radio'
+      new_field_type.appendChild(option1)
+      new_field_type.appendChild(option2)
+      new_field_type.appendChild(option3)
+      new_field_type.appendChild(option4)
+      new_field_type.appendChild(option5)
+      new_field_type.appendChild(option6)
+      new_field_type.appendChild(option7)
+      new_field_type.appendChild(option8)
+      new_field_type.appendChild(option9)
+    
+      const new_field = document.createElement('input')
+      new_field.setAttribute('type', 'text')
+      new_field.setAttribute('name', 'name')
+      new_field.setAttribute('placeholder', 'Field Name')
+      new_field.setAttribute('class', 'input input-primary w-72')
+      new_field_div.appendChild(new_field)
+    
+      const description = document.createElement('input')
+      description.setAttribute('type', 'text')
+      description.setAttribute('name', 'description')
+      description.setAttribute('placeholder', 'Description')
+      description.setAttribute('class', 'input input-primary w-72')
+      new_field_div.appendChild(description)
+    
+      const isRequiredCheckbox = document.createElement('input')
+      isRequiredCheckbox.setAttribute('type', 'checkbox')
+      isRequiredCheckbox.setAttribute('name', 'is_required')
+      isRequiredCheckbox.setAttribute('class', 'checkbox checkbox-primary')
+      const isRequiredLabel = document.createElement('label')
+      isRequiredLabel.innerHTML = 'Required:'
+      isRequiredLabel.setAttribute('for', 'is_required')
+      new_field_div.appendChild(isRequiredLabel)
+      new_field_div.appendChild(isRequiredCheckbox)
+    
+      new_field_div.appendChild(new_field_type)
+    
+      const reorderButtons = document.createElement('div')
+      reorderButtons.setAttribute('class', 'reorder-buttons')
+      const upButton = document.createElement('button')
+      upButton.setAttribute('type', 'button')
+      upButton.setAttribute('class', 'btn btn-secondary btn-sm')
+      upButton.innerHTML = '&uarr;'
+      upButton.setAttribute('onclick', 'moveFieldUp(this)')
+      const downButton = document.createElement('button')
+      downButton.setAttribute('type', 'button')
+      downButton.setAttribute('class', 'btn btn-secondary btn-sm')
+      downButton.innerHTML = '&darr;'
+      downButton.setAttribute('onclick', 'moveFieldDown(this)')
+      reorderButtons.appendChild(upButton)
+      reorderButtons.appendChild(downButton)
+      new_field_div.appendChild(reorderButtons)
+    
+      const allFields = document.getElementById('fields')
+      allFields.appendChild(new_field_div)
+    }
+    
+    function changeFieldType(type) {
+      const parent = type.parentElement
+      const value = type.value
+      const optionsContainer = parent.querySelector('.options-container')
+      if (value === 'select' || value === 'checkbox' || value === 'radio') {
+        if (!optionsContainer) {
+          const optionsDiv = document.createElement('div')
+          optionsDiv.setAttribute('class', 'options-container')
+    
+          const addButton = document.createElement('button')
+          addButton.setAttribute('type', 'button')
+          addButton.setAttribute('class', 'btn btn-secondary btn-sm')
+          addButton.innerHTML = '+'
+          addButton.setAttribute('onclick', 'addOption(this)')
+    
+          optionsDiv.appendChild(addButton)
+    
+          parent.appendChild(optionsDiv)
+        }
+      } else {
+        if (optionsContainer) {
+          parent.removeChild(optionsContainer)
+        }
+      }
+    }
+    
+    function addOption(button) {
+      const optionsContainer = button.parentElement
+      const newOptionDiv = document.createElement('div')
+      newOptionDiv.setAttribute('class', 'flex items-center')
+      const optionInput = document.createElement('input')
+      optionInput.setAttribute('type', 'text')
+      optionInput.setAttribute('name', 'options')
+      optionInput.setAttribute('placeholder', 'Option')
+      optionInput.setAttribute('class', 'input input-primary w-72')
+      const deleteButton = document.createElement('button')
+      deleteButton.setAttribute('type', 'button')
+      deleteButton.setAttribute('class', 'btn btn-secondary btn-sm ml-2')
+      deleteButton.innerHTML = '-'
+      deleteButton.setAttribute('onclick', 'deleteOption(this)')
+      newOptionDiv.appendChild(optionInput)
+      newOptionDiv.appendChild(deleteButton)
+      optionsContainer.insertBefore(newOptionDiv, button)
+    }
+    
+    function deleteOption(button) {
+      const optionDiv = button.parentElement
+      optionDiv.remove()
+    }
+    
+    function moveFieldUp(button) {
+      const fieldDiv = button.closest('.border')
+      const prevFieldDiv = fieldDiv.previousElementSibling
+      if (prevFieldDiv) {
+        fieldDiv.parentNode.insertBefore(fieldDiv, prevFieldDiv)
+        updateFieldIndexes()
+      }
+    }
+    
+    function moveFieldDown(button) {
+      const fieldDiv = button.closest('.border')
+      const nextFieldDiv = fieldDiv.nextElementSibling
+      if (nextFieldDiv) {
+        fieldDiv.parentNode.insertBefore(nextFieldDiv, fieldDiv)
+        updateFieldIndexes()
+      }
+    }
+    
+    function updateFieldIndexes() {
+      const fieldDivs = document.querySelectorAll('#fields > div')
+      fieldDivs.forEach((div, index) => {
+        div.setAttribute('data-index', index)
+      })
+    }
+    
+    function sendFormData() {
+      // e.preventDefault()
+      const formFields = document.querySelectorAll('#fields > .border')
+    
+      const formData = Array.from(formFields).map((fieldDiv) => {
+        const fieldData = {
+          name: fieldDiv.querySelector('input[name="name"]').value,
+          type: fieldDiv.querySelector('select[name="type"]').value,
+          description: fieldDiv.querySelector('input[name="description"]').value,
+          is_required: fieldDiv.querySelector('input[name="is_required"]').checked
+        }
+    
+        if (fieldData.type === 'select' || fieldData.type === 'checkbox' || fieldData.type === 'radio') {
+          const options = fieldDiv.querySelectorAll('input[name="options"]')
+          fieldData.options = Array.from(options).map((option) => option.value)
+        }
+    
+        return fieldData
+      })
+    
+      const jsonData = JSON.stringify(formData)
+      console.log(jsonData)
+    
+      // Replace 'YOUR_ENDPOINT_URL' with your actual endpoint URL
+      const endpointUrl = '/new_form_submit/'
+    
+      fetch(endpointUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: jsonData
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Handle the response from the server if needed
+          console.log(data)
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during the request
+          console.error('Error:', error)
+        })
+    }
+  </script>
+{% endblock %}
+{% block main %}
+  <h1>New Form</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div id="fields" class="form-control"></div>
+    <div>
+      <button type="button" id="add_field" class="btn btn-primary" onclick="addInputField()">Add Field</button>
+      <button type="button" class="btn btn-primary" onclick="sendFormData()">Save Form</button>
+    </div>
+  </form>
+{% endblock %}
