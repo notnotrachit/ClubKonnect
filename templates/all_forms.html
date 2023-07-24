@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block main %}
+  <div>
+    <span class="text-4xl">All forms</span>
+
+    {% for form in forms %}
+      <div>
+        <a href="/">{{ form.name }}</a>
+        <span>{{ form.description }}</span>
+        Published: {{ form.is_published }}
+        Accepting responses: {{ form.accepting_responses }}
+      </div>
+    {% endfor %}
+
+    <a class="p-3 btn btn-primary" href="/create_form/">New form</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block main %}
+  <div>
+    <span class="text-5xl">Create a new form</span>
+    <form method="POST">
+      {% csrf_token %}
+      <label>Form name</label>
+      <input type="text" name="name" placeholder="Form name" class="border-2 border-gray-300 rounded-md" />
+      <label>Form description</label>
+      <input type="text" name="description" placeholder="Form description" class="border-2 border-gray-300 rounded-md" />
+      <label>Public</label>
+      <input type="checkbox" name="is_public" class="border-2 border-gray-300 rounded-md" />
+      <label>Accepting Responses</label>
+      <input type="checkbox" name="accepting_responses" class="border-2 border-gray-300 rounded-md" />
+      <button type="submit" class="btn btn-primary rounded-md">Continue</button>
+    </form>
+  </div>
+{% endblock %}

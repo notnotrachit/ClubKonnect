@@ -4,93 +4,32 @@
   <script>
     function addInputField() {
       var new_field_div = document.createElement('div')
-      new_field_div.setAttribute('class', 'border border-gray-300 rounded-md p-5 m-2 flex flex-col')
+      new_field_div.innerHTML = `
+                                    <div id="fields" class="border border-gray-300 rounded-md p-5 m-2 flex flex-col">
+                                      <select name="type" class="select select-primary w-72" onchange="changeFieldType(this)">
+                                        <option value="text">Text</option>
+                                        <option value="number">Number</option>
+                                        <option value="date">Date</option>
+                                        <option value="email">Email</option>
+                                        <option value="password">Password</option>
+                                        <option value="textarea">Textarea</option>
+                                        <option value="select">Select</option>
+                                        <option value="checkbox">Checkbox</option>
+                                        <option value="radio">Radio</option>
+                                      </select>
+                                      <input type="text" name="name" placeholder="Field Name" class="input input-primary w-72">
+                                      <input type="text" name="description" placeholder="Description" class="input input-primary w-72">
+                                      <label for="is_required">Required:</label>
+                                      <input type="checkbox" name="is_required" class="checkbox checkbox-primary">
+                                      <input type="text" name="placeholder" placeholder="Placeholder" class="input input-primary w-72">
+                                      <div class="reorder-buttons">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="moveFieldUp(this)">&uarr;</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="moveFieldDown(this)">&darr;</button>
+                                      </div>
+                                    </div>
+                                  `
     
-      const new_field_type = document.createElement('select')
-      new_field_type.setAttribute('name', 'type')
-      new_field_type.setAttribute('class', 'select select-primary w-72')
-      new_field_type.setAttribute('onchange', 'changeFieldType(this)')
-    
-      const option1 = document.createElement('option')
-      option1.setAttribute('value', 'text')
-      option1.innerHTML = 'Text'
-      const option2 = document.createElement('option')
-      option2.setAttribute('value', 'number')
-      option2.innerHTML = 'Number'
-      const option3 = document.createElement('option')
-      option3.setAttribute('value', 'date')
-      option3.innerHTML = 'Date'
-      const option4 = document.createElement('option')
-      option4.setAttribute('value', 'email')
-      option4.innerHTML = 'Email'
-      const option5 = document.createElement('option')
-      option5.setAttribute('value', 'password')
-      option5.innerHTML = 'Password'
-      const option6 = document.createElement('option')
-      option6.setAttribute('value', 'textarea')
-      option6.innerHTML = 'Textarea'
-      const option7 = document.createElement('option')
-      option7.setAttribute('value', 'select')
-      option7.innerHTML = 'Select'
-      const option8 = document.createElement('option')
-      option8.setAttribute('value', 'checkbox')
-      option8.innerHTML = 'Checkbox'
-      const option9 = document.createElement('option')
-      option9.setAttribute('value', 'radio')
-      option9.innerHTML = 'Radio'
-      new_field_type.appendChild(option1)
-      new_field_type.appendChild(option2)
-      new_field_type.appendChild(option3)
-      new_field_type.appendChild(option4)
-      new_field_type.appendChild(option5)
-      new_field_type.appendChild(option6)
-      new_field_type.appendChild(option7)
-      new_field_type.appendChild(option8)
-      new_field_type.appendChild(option9)
-    
-      const new_field = document.createElement('input')
-      new_field.setAttribute('type', 'text')
-      new_field.setAttribute('name', 'name')
-      new_field.setAttribute('placeholder', 'Field Name')
-      new_field.setAttribute('class', 'input input-primary w-72')
-      new_field_div.appendChild(new_field)
-    
-      const description = document.createElement('input')
-      description.setAttribute('type', 'text')
-      description.setAttribute('name', 'description')
-      description.setAttribute('placeholder', 'Description')
-      description.setAttribute('class', 'input input-primary w-72')
-      new_field_div.appendChild(description)
-    
-      const isRequiredCheckbox = document.createElement('input')
-      isRequiredCheckbox.setAttribute('type', 'checkbox')
-      isRequiredCheckbox.setAttribute('name', 'is_required')
-      isRequiredCheckbox.setAttribute('class', 'checkbox checkbox-primary')
-      const isRequiredLabel = document.createElement('label')
-      isRequiredLabel.innerHTML = 'Required:'
-      isRequiredLabel.setAttribute('for', 'is_required')
-      new_field_div.appendChild(isRequiredLabel)
-      new_field_div.appendChild(isRequiredCheckbox)
-    
-      new_field_div.appendChild(new_field_type)
-    
-      const reorderButtons = document.createElement('div')
-      reorderButtons.setAttribute('class', 'reorder-buttons')
-      const upButton = document.createElement('button')
-      upButton.setAttribute('type', 'button')
-      upButton.setAttribute('class', 'btn btn-secondary btn-sm')
-      upButton.innerHTML = '&uarr;'
-      upButton.setAttribute('onclick', 'moveFieldUp(this)')
-      const downButton = document.createElement('button')
-      downButton.setAttribute('type', 'button')
-      downButton.setAttribute('class', 'btn btn-secondary btn-sm')
-      downButton.innerHTML = '&darr;'
-      downButton.setAttribute('onclick', 'moveFieldDown(this)')
-      reorderButtons.appendChild(upButton)
-      reorderButtons.appendChild(downButton)
-      new_field_div.appendChild(reorderButtons)
-    
-      const allFields = document.getElementById('fields')
+      const allFields = document.getElementById('all_fields')
       allFields.appendChild(new_field_div)
     }
     
@@ -171,14 +110,15 @@
     
     function sendFormData() {
       // e.preventDefault()
-      const formFields = document.querySelectorAll('#fields > .border')
-    
+      const formFields = document.querySelectorAll('#fields')
+      console.log(formFields)
       const formData = Array.from(formFields).map((fieldDiv) => {
         const fieldData = {
           name: fieldDiv.querySelector('input[name="name"]').value,
           type: fieldDiv.querySelector('select[name="type"]').value,
           description: fieldDiv.querySelector('input[name="description"]').value,
-          is_required: fieldDiv.querySelector('input[name="is_required"]').checked
+          is_required: fieldDiv.querySelector('input[name="is_required"]').checked,
+          placeholder: fieldDiv.querySelector('input[name="placeholder"]').value
         }
     
         if (fieldData.type === 'select' || fieldData.type === 'checkbox' || fieldData.type === 'radio') {
@@ -193,7 +133,7 @@
       console.log(jsonData)
     
       // Replace 'YOUR_ENDPOINT_URL' with your actual endpoint URL
-      const endpointUrl = '/new_form_submit/'
+      const endpointUrl = '/new_form/{{ form.id }}/'
     
       fetch(endpointUrl, {
         method: 'POST',
@@ -207,6 +147,7 @@
         .then((data) => {
           // Handle the response from the server if needed
           console.log(data)
+          window.location.href = '/all_forms/'
         })
         .catch((error) => {
           // Handle any errors that occurred during the request
@@ -219,7 +160,7 @@
   <h1>New Form</h1>
   <form method="post">
     {% csrf_token %}
-    <div id="fields" class="form-control"></div>
+    <div id="all_fields" class="form-control"></div>
     <div>
       <button type="button" id="add_field" class="btn btn-primary" onclick="addInputField()">Add Field</button>
       <button type="button" class="btn btn-primary" onclick="sendFormData()">Save Form</button>
