@@ -29,4 +29,6 @@ urlpatterns = [
     path('form_details/<int:form_id>/', views.form_detail, name='form_details'),
     path('edit_form_fields/<int:form_id>/', views.edit_form_fields, name='edit_form_fields'),
     path('', views.home, name='home'),
+    path('all-entries/', views.all_entries, name='all_entries'),
+    path('entry/<int:entry_id>/', views.entry_detail, name='entry_detail'),
 ]

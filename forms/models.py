@@ -54,7 +54,7 @@ class entries(models.Model):
     user = models.ForeignKey('auth.user', on_delete=models.CASCADE)
     data = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
-    notes = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True, default="")
     status = models.CharField(
         choices=(
             ('pending', 'Pending'),

@@ -5,10 +5,12 @@
 
     {% for form in forms %}
       <div>
-        <a href="/">{{ form.name }}</a>
+        <span>{{ form.name }}</span>
         <span>{{ form.description }}</span>
         Published: {{ form.is_published }}
         Accepting responses: {{ form.accepting_responses }}
+        <a href="{% url 'form_details' form.id %}">Details</a>
+        <a href="{% url 'form_view' form.id %}">View</a>
       </div>
     {% endfor %}
 

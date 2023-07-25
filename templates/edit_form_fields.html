@@ -38,13 +38,22 @@ function changeFieldType(type) {
   const parent = type.parentElement;
   const value = type.value;
   const optionsContainer = parent.querySelector(".options-container");
-  if (value === "select" || value === "checkbox" || value === "radio") {
+  if (value == "select" || value == "checkbox" || value == "radio") {
     if (!optionsContainer) {
       parent.innerHTML += `
         <div class="options-container">
           <button type="button" class="btn btn-secondary btn-sm" onclick="addOption(this)">+</button>
         </div>
       `;
+    }
+    all_options = parent.getElementsByTagName("option");
+    for (i = 0; i < all_options.length; i++) {
+      if (all_options[i].value == value) {
+        all_options[i].selected = true;
+      }
+      else {
+        all_options[i].selected = false;
+      }
     }
   } else {
     if (optionsContainer) {
@@ -184,7 +193,6 @@ function addOption(button) {
                         <label for="is_required">Required:</label>
                         <input type="checkbox" name="is_required" class="checkbox checkbox-primary" {% if field.is_required == True %}checked{% endif %}/>
                     </div>
-                    {{ field.field_type }}
                     <select name="type"
                             class="select select-primary w-72"
                             onchange="changeFieldType(this)">

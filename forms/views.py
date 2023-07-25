@@ -132,3 +132,13 @@ def home(request):
     all_forms = Forms.objects.filter(is_published=True)
     print(all_forms)
     return render(request, 'home.html', {'all_forms': all_forms})
+
+
+def all_entries(request):
+    entries_all = entries.objects.all()
+    return render(request, 'all_entries.html', {'entries': entries_all})
+
+
+def entry_detail(request, entry_id):
+    entry = entries.objects.get(id=entry_id)
+    return render(request, 'entry_detail.html', {'entry': entry})
