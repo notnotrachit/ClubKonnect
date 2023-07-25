@@ -1,56 +1,92 @@
 {% extends 'base.html' %}
+
+{% block script %}
+  <!-- Add this script tag in your HTML to include the JavaScript code -->
+  <script>
+    const submit_button = document.getElementById('submit_form')
+    submit_button.addEventListener('click', (event) => {
+      event.preventDefault()
+      postFormData()
+    })
+    
+    async function postFormData() {
+      const form = document.getElementById('renderedForm')
+      const formData = new FormData(form)
+    
+      // Convert the FormData object to a plain JavaScript object
+      const formDataObject = {}
+      formData.forEach((value, key) => {
+        formDataObject[key] = value
+      })
+    
+      const jsonData = {
+        form_data: formDataObject
+      }
+    
+      const response = await fetch("{% url 'form_view' form_id=form.id %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jsonData)
+      })
+      if (response.ok) {
+        const jsonResponse = await response.json()
+        console.log(jsonResponse)
+      } else {
+        console.log(response.status)
+      }
+    }
+  </script>
+{% endblock %}
 {% block main %}
-    <h1>Rendered Form</h1>
-    <form id="renderedForm" method="post">
-      {% csrf_token %}
-      <div id="fields" class="form-control">
-        {% for i in form.fields.all %}
-          <div class="form-group">
-            <label for="{{ i }}">{{ i }}</label>
-            {% if i.field_type == 'text' %}
-            <input type="text" class="form-control" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}">
+  <h1>Rendered Form</h1>
+  <form id="renderedForm" method="post">
+    {% csrf_token %}
+    <div id="fields" class="form-control">
+      {% for i in form.fields.all %}
+        <div class="form-group">
+          <label for="{{ i }}">{{ i }}</label>
+          {% if i.field_type == 'text' %}
+            <input type="text" class="f" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'textarea' %}
-            <textarea class="form-control" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}"></textarea>
+            <textarea id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" {% if i.is_required %}required{% endif %}></textarea>
             {% elif i.field_type == 'select' %}
-            <select class="form-control" id="{{ i }}" name="{{ i }}">
+            <select id="{{ i }}" name="{{ i }}" {% if i.is_required %}required{% endif %}>
               {% for j in i.choices.all %}
-              <option value="{{ j }}">{{ j }}</option>
+                <option value="{{ j }}">{{ j }}</option>
               {% endfor %}
             </select>
-            {% elif i.field_type == 'radio' %}
+            {% elif i.field_type == 'radio' %} <div class="m-5 p-5"> {% for j in i.choices.all %}
+                <div class="flex gap-4">
+                <label>
+                <input type="radio" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
+                  {{ j }}</label>
+                </div>
+              
+            {% endfor %} </div> {% elif i.field_type == 'checkbox' %}
             {% for j in i.choices.all %}
-            <div class="radio">
-              <label>
-                <input type="radio" name="{{ i }}" id="{{ j }}" value="{{ j }}">
-                {{ j }}
-              </label>
-            </div>
-            {% endfor %}
-            {% elif i.field_type == 'checkbox' %}
-            {% for j in i.choices.all %}
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" name="{{ i }}" id="{{ j }}" value="{{ j }}">
-                {{ j }}
-              </label>
-            </div>
-            {% endfor %}
-            {% elif i.field_type == 'email' %}
-            <input type="email" class="form-control" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}">
+              <div class="flex gap-4 m-5">
+                <label class="flex gap-4">{{ j }}
+
+                <input type="checkbox" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
+
+                </label>
+              </div>
+            {% endfor %} {% elif i.field_type == 'email' %}
+            <input type="email" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
             {% elif i.field_type == 'password' %}
-            <input type="password" class="form-control" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}">
+            <input type="password" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
             {% elif i.field_type == 'number' %}
-            <input type="number" class="form-control" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}">
+            <input type="number" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
             {% elif i.field_type == 'url' %}
-            <input type="url" class="form-control" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" >
-            {% endif %}
-          </div>
-        {% endfor %}
-
-
-      </div>
-      <div>
-        <button type="submit" class="btn btn-primary">Submit Form</button>
-      </div>
-    </form>
-{% endblock main %}
+            <input type="url" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" id="submit_form">Submit Form</button>
+    </div>
+  </form>
+{% endblock %}

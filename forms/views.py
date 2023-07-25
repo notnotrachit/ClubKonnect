@@ -37,13 +37,19 @@ def form_view(request, form_id):
     if request.method == "GET":
         form = Forms.objects.get(id=form_id)
         return render(request, 'form_view.html', {'form': form})
-    else:
-        data = json.loads(request.body)
+    elif request.method == "POST":
+        data = {}
+        for key in request.POST.keys():
+            if key != 'csrfmiddlewaretoken':
+                if len(request.POST.getlist(key)) == 1:
+                    data[key] = request.POST[key]
+                else:
+                    data[key] = request.POST.getlist(key)
         form = Forms.objects.get(id=form_id)
         for field in form.fields.all():
             if field.is_required and field.field not in data:
                 return JsonResponse({'success': False, 'error': f'{field.field} is required'})
-        new_entry = entries.objects.create(
+        entries.objects.create(
             form=form,
             user=request.user,
             data=data

@@ -184,6 +184,7 @@ function addOption(button) {
                         <label for="is_required">Required:</label>
                         <input type="checkbox" name="is_required" class="checkbox checkbox-primary" {% if field.is_required == True %}checked{% endif %}/>
                     </div>
+                    {{ field.field_type }}
                     <select name="type"
                             class="select select-primary w-72"
                             onchange="changeFieldType(this)">
@@ -195,11 +196,8 @@ function addOption(button) {
                         <option value="textarea" {% if field.field_type == 'textarea' %}selected{% endif %}>Textarea</option>
                         <option value="url" {% if field.field_type == 'url' %}selected{% endif %}>URL</option>
                         <option value="select" {% if field.field_type == 'select' %}selected{% endif %}>Select</option>
-                        <option value="checkbox" {% if field.field_type == 'checkbox' %}selected{% endif %} >Checkbox</option>
-                        <option value="radio" {% if field.field_type == 'radio' %}selected{% endif %}
-                        >
-                            Radio
-                        </option>
+                        <option value="checkbox" {% if field.field_type == 'checkbox' %}selected{% endif %}>Checkbox</option>
+                        <option value="radio" {% if field.field_type == 'radio' %}selected{% endif %}>Radio</option>
                     </select>
                     {% if field.field_type == 'select' or field.field_type == 'checkbox' or field.field_type == 'radio' %}
                         {% for choice in field.choices.all %}
