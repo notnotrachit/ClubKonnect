@@ -1,5 +1,6 @@
-<!-- new_form.html -->
-{% extends "base.html" %} {% block script %}
+{% extends "base.html" %}
+
+ {% block script %}
 <script>
   function addInputField() {
     var new_field_div = document.createElement("div");
@@ -26,8 +27,6 @@
                                         <button type="button" class="btn btn-secondary btn-sm" onclick="moveFieldUp(this)">&uarr;</button>
                                         <button type="button" class="btn btn-secondary btn-sm" onclick="moveFieldDown(this)">&darr;</button>
                                       </div>
-                                      <button type="button" class="btn btn-danger btn-sm" onclick="deleteField(this)">Delete</button>
-
                                     </div>
                                   `;
 
@@ -35,36 +34,36 @@
     allFields.appendChild(new_field_div);
   }
 
-  function changeFieldType(type) {
-    const parent = type.parentElement;
-    const value = type.value;
-    const optionsContainer = parent.querySelector(".options-container");
-    if (value === "select" || value === "checkbox" || value === "radio") {
-      if (!optionsContainer) {
-        parent.innerHTML += `
+function changeFieldType(type) {
+  const parent = type.parentElement;
+  const value = type.value;
+  const optionsContainer = parent.querySelector(".options-container");
+  if (value === "select" || value === "checkbox" || value === "radio") {
+    if (!optionsContainer) {
+      parent.innerHTML += `
         <div class="options-container">
           <button type="button" class="btn btn-secondary btn-sm" onclick="addOption(this)">+</button>
         </div>
       `;
-      }
-    } else {
-      if (optionsContainer) {
-        optionsContainer.remove();
-      }
+    }
+  } else {
+    if (optionsContainer) {
+      optionsContainer.remove();
     }
   }
+}
 
-  function addOption(button) {
-    const optionsContainer = button.parentElement;
-    const newOptionDiv = document.createElement("div");
-    newOptionDiv.innerHTML = `
+function addOption(button) {
+  const optionsContainer = button.parentElement;
+  const newOptionDiv = document.createElement("div");
+  newOptionDiv.innerHTML = `
     <div class="flex items-center">
       <input type="text" name="options" placeholder="Option" class="input input-primary w-72">
       <button type="button" class="btn btn-secondary btn-sm ml-2" onclick="deleteOption(this)">-</button>
     </div>
   `;
-    optionsContainer.insertBefore(newOptionDiv, button);
-  }
+  optionsContainer.insertBefore(newOptionDiv, button);
+}
 
   function deleteOption(button) {
     const optionDiv = button.parentElement;
@@ -126,7 +125,7 @@
     console.log(jsonData);
 
     // Replace 'YOUR_ENDPOINT_URL' with your actual endpoint URL
-    const endpointUrl = "/form/{{ form.id }}/";
+    const endpointUrl = "/edit_form_fields/{{ form.id }}/";
 
     fetch(endpointUrl, {
       method: "POST",
@@ -149,17 +148,84 @@
   }
 
   function deleteField(button) {
-    const fieldDiv = button.closest(".border");
-    fieldDiv.remove();
-    updateFieldIndexes();
+      const fieldDiv = button.closest('.border')
+      fieldDiv.remove()
+      updateFieldIndexes()
   }
 </script>
-{% endblock script %} {% block main %}
-<h1>New Form</h1>
-<form method="post">
-  {% csrf_token %}
-  <div id="all_fields" class="form-control"></div>
-  <div>
+{% endblock script %}
+
+{% block main %}
+    <div>
+        <span class="text-4xl">Form: {{ form.name }}</span>
+        <br />
+        <span class="text-4xl">Form questions:</span>
+        <br />
+        <div id="all_fields">
+            {% for field in form.fields.all %}
+                <div id="fields"
+                     class="border border-gray-300 rounded-md p-5 m-2 flex flex-col">
+                    <input type="text"
+                           name="name"
+                           placeholder="Field Name"
+                           class="input input-primary w-72"
+                           value="{{ field.field }}" />
+                    <input type="text"
+                           name="description"
+                           placeholder="Description"
+                           class="input input-primary w-72"
+                           value="{{ field.description }}" />
+                    <input type="text"
+                           name="placeholder"
+                           placeholder="Placeholder"
+                           class="input input-primary w-72"
+                           value="{{ field.placeholder }}" />
+                    <div class="flex gap-4">
+                        <label for="is_required">Required:</label>
+                        <input type="checkbox" name="is_required" class="checkbox checkbox-primary" {% if field.is_required == True %}checked{% endif %}/>
+                    </div>
+                    <select name="type"
+                            class="select select-primary w-72"
+                            onchange="changeFieldType(this)">
+                        <option value="text">Text</option>
+                        <option value="number" {% if field.field_type == 'number' %}selected{% endif %}>Number</option>
+                        <option value="date">Date</option>
+                        <option value="email" {% if field.field_type == 'email' %}selected{% endif %}>Email</option>
+                        <option value="password" {% if field.field_type == 'password' %}selected{% endif %}>Password</option>
+                        <option value="textarea" {% if field.field_type == 'textarea' %}selected{% endif %}>Textarea</option>
+                        <option value="url" {% if field.field_type == 'url' %}selected{% endif %}>URL</option>
+                        <option value="select" {% if field.field_type == 'select' %}selected{% endif %}>Select</option>
+                        <option value="checkbox" {% if field.field_type == 'checkbox' %}selected{% endif %} >Checkbox</option>
+                        <option value="radio" {% if field.field_type == 'radio' %}selected{% endif %}
+                        >
+                            Radio
+                        </option>
+                    </select>
+                    {% if field.field_type == 'select' or field.field_type == 'checkbox' or field.field_type == 'radio' %}
+                        {% for choice in field.choices.all %}
+                                <div class="flex items-center">
+                                    <input type="text" name="options" placeholder="Option" class="input input-primary w-72" value="{{ choice }}">
+                                    <button type="button" class="btn btn-secondary btn-sm ml-2" onclick="deleteOption(this)">-</button>
+                                </div>
+                        {% endfor %}
+                                <div class="options-container">
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="addOption(this)">+</button>
+                                </div>
+                    {% endif %}
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteField(this)">Delete</button>
+
+                    <div class="reorder-buttons">
+                        <button type="button"
+                                class="btn btn-secondary btn-sm"
+                                onclick="moveFieldUp(this)">↑</button>
+                        <button type="button"
+                                class="btn btn-secondary btn-sm"
+                                onclick="moveFieldDown(this)">↓</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+          <div>
     <button
       type="button"
       id="add_field"
@@ -172,5 +238,5 @@
       Save Form
     </button>
   </div>
-</form>
+    </div>
 {% endblock main %}

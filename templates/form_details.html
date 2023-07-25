@@ -1,5 +1,13 @@
-{% extends 'base.html' %}
-
-{% block main %}
-  <div></div>
-{% endblock %}
+{% extends "base.html" %} {% block main %}
+<div>
+  <span class="text-3xl">{{ form.name }}</span><br />
+  <span class="text-3xl">{{ form.description }}</span><br />
+  <span class="text-3xl">Published: {{ form.is_published }}</span><br />
+  <span class="text-3xl"
+    >Accepting Responses: {{ form.accepting_responses }}</span
+  ><br />
+  <a href="{% url 'edit_form_fields' form_id=form.id %}">
+    <button class="btn btn-primary">View And Edit Fields</button>
+  </a>
+</div>
+{% endblock main %}

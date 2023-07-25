@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block main %}
+<div>
+  <h1 class="text-6xl">Recruitments</h1>
+  {% for form in all_forms %}
+  <div class="border border-gray-500 m-5 p-5">
+    <h2 class="text-4xl">{{ form.name }}</h2>
+    <p class="text-2xl">{{ form.description }}</p>
+    <p class="text-2xl">{{ form.created_at }}</p>
+    <a href="{% url 'form_view' form_id=form.id %}">Apply</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock main %}
