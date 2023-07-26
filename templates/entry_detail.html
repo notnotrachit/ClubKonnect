@@ -1,14 +1,51 @@
-{% extends 'base.html' %} {% block main %}
+{% extends 'base.html' %}
+
+{% block script %}
+<script>
+  // Add the script here
+  let typingTimer;
+
+  const typingDelay = 2000;
+
+  function save_notes() {
+    fetch(
+      "{% url 'edit_entry_notes' entry.id %}",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          notes: document.querySelector("textarea").value,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
+  function onTextareaInput() {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+      save_notes();
+    }, typingDelay);
+  }
+</script>
+{% endblock script %}
+
+{% block main %}
 {% load get_value_by_key %} 
 <div>
   <span class="text-3xl bold">{{ entry.user }} - </span>
-
   <span class="text-xl">{{ entry.form }}</span><br />
 
   {% for field in entry.form.fields.all %} {% with field_value=entry.data|get_value_by_key:field.field %} 
   {% if field.field_type == 'checkbox' %}
-  <span
-    >{{ field.field }}:<br />
+  <span>
+    {{ field.field }}:<br />
     <ul class="list-disc list-inside">
       {% for value in field_value %}
       <li>{{ value }}</li>
@@ -21,12 +58,10 @@
 </div> {% endfor %}
 
 <div>
-    Notes:
-    <textarea class="w-full" rows="10">
-    {{ entry.notes }}
-    </textarea>
+  Notes:
+  <textarea class="w-full" rows="10" oninput="onTextareaInput()">{{ entry.notes }}</textarea>
+  <button onclick="save_notes()">
+    Save
+  </button>
 </div>
-
-
-
 {% endblock main %}

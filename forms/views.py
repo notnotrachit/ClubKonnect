@@ -142,3 +142,14 @@ def all_entries(request):
 def entry_detail(request, entry_id):
     entry = entries.objects.get(id=entry_id)
     return render(request, 'entry_detail.html', {'entry': entry})
+
+
+def save_notes(request, entry_id):
+    if request.method == 'POST':
+        entry = entries.objects.get(id=entry_id)
+        new_notes= json.loads(request.body)
+        entry.notes = new_notes["notes"]
+        entry.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
