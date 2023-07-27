@@ -153,3 +153,8 @@ def save_notes(request, entry_id):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False})
+    
+def form_entries(request, form_id):
+    form = Forms.objects.get(id=form_id)
+    entries_all = entries.objects.filter(form=form)
+    return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
