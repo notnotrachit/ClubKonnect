@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 from forms import views
-
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('new_form/', views.new_form, name='new_form'),
@@ -34,3 +35,6 @@ urlpatterns = [
     path('entry/<int:entry_id>/', views.entry_detail, name='entry_detail'),
     path('entry/<int:entry_id>/notes/', views.save_notes, name='edit_entry_notes'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
