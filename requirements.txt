@@ -1,3 +1,6 @@
 django
 psycopg2-binary
 python-dotenv
+django-allauth
+django-allauth-ui
+django-widget-tweaks

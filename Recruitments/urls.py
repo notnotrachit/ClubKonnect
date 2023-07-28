@@ -34,6 +34,9 @@ urlpatterns = [
     path('all-entries/', views.all_entries, name='all_entries'),
     path('entry/<int:entry_id>/', views.entry_detail, name='entry_detail'),
     path('entry/<int:entry_id>/notes/', views.save_notes, name='edit_entry_notes'),
+    path('entry/<int:entry_id>/status/', views.change_form_status, name='change_status'),
+    path('accounts/', include('allauth.urls')),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json
 from .models import Forms, Field, Choices, entries
+from Recruitments.decorators import superuser_required
+
 # Create your views here.
+@superuser_required
 def new_form(request, form_id=None):
     if request.method == 'POST':
         form = Forms.objects.get(id=form_id)
@@ -59,12 +62,12 @@ def form_view(request, form_id):
 
         # return redirect('home')
 
-
+@superuser_required
 def all_forms(request):
     forms = Forms.objects.all()
     return render(request, 'all_forms.html', {'forms': forms})
 
-
+@superuser_required
 def create_form(request):
     if request.method == 'POST':
         data = request.POST.dict()
@@ -88,11 +91,12 @@ def create_form(request):
         return render(request, 'create_form.html')
     
 
-
+@superuser_required
 def form_detail(request, form_id):
     form = Forms.objects.get(id=form_id)
     return render(request, 'form_details.html', {'form': form})
 
+@superuser_required
 def edit_form_fields(request, form_id):
     if request.method == 'POST':
 
@@ -133,17 +137,17 @@ def home(request):
     print(all_forms)
     return render(request, 'home.html', {'all_forms': all_forms})
 
-
+@superuser_required
 def all_entries(request):
     entries_all = entries.objects.all()
     return render(request, 'all_entries.html', {'entries': entries_all})
 
-
+@superuser_required
 def entry_detail(request, entry_id):
     entry = entries.objects.get(id=entry_id)
     return render(request, 'entry_detail.html', {'entry': entry})
 
-
+@superuser_required
 def save_notes(request, entry_id):
     if request.method == 'POST':
         entry = entries.objects.get(id=entry_id)
@@ -154,7 +158,20 @@ def save_notes(request, entry_id):
     else:
         return JsonResponse({'success': False})
     
+@superuser_required
 def form_entries(request, form_id):
     form = Forms.objects.get(id=form_id)
     entries_all = entries.objects.filter(form=form)
     return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
+
+
+@superuser_required
+def change_form_status(request, entry_id):
+    if request.method == 'POST':
+        entry = entries.objects.get(id=entry_id)
+        new_status = json.loads(request.body)['status']
+        entry.status = new_status
+        entry.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
