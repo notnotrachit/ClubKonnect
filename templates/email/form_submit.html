@@ -1,0 +1,24 @@
+<html>
+  <body>
+    <h1>Form Submitted</h1>
+    <p>Your form {{ form.name }} has been submitted</p>
+
+    <h2>Form Data</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in data.items %}
+        <tr>
+          <td>{{ key }}</td>
+          <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

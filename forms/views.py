@@ -3,6 +3,12 @@ from django.http import JsonResponse
 import json
 from .models import Forms, Field, Choices, entries
 from Recruitments.decorators import superuser_required
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+import os
+
 
 # Create your views here.
 @superuser_required
@@ -57,6 +63,14 @@ def form_view(request, form_id):
             user=request.user,
             data=data
         )
+        email_text = """
+        """
+        # send_mail("Thank You for applying",f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>", [request.user.email], fail_silently=False)
+
+        html_message = render_to_string('email/form_submit.html', {'form': form, 'data': data})
+        plain_message = strip_tags(html_message)
+
+        send_mail("Thank You for applying", plain_message, f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>", [request.user.email], fail_silently=False, html_message=html_message)
         return JsonResponse({'success': True})
 
 
