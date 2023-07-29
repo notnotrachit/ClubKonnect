@@ -36,6 +36,7 @@ urlpatterns = [
     path('entry/<int:entry_id>/notes/', views.save_notes, name='edit_entry_notes'),
     path('entry/<int:entry_id>/status/', views.change_form_status, name='change_status'),
     path('accounts/', include('allauth.urls')),
+    path('user_social', views.user_social, name='user_social'),
 
 ]
 

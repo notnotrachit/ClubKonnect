@@ -13,6 +13,14 @@
       <input type="checkbox" name="is_public" class="border-2 border-gray-300 rounded-md" />
       <label>Accepting Responses</label>
       <input type="checkbox" name="accepting_responses" class="border-2 border-gray-300 rounded-md" />
+      {% if github_social_app %}
+      <label>Require GitHub?</label>
+      <input type="checkbox" name="github_required" class="border-2 border-gray-300 rounded-md" />
+      {% endif %}
+      {% if linkedin_social_app %}
+      <label>Require Linkedin?</label>
+      <input type="checkbox" name="linkedin_required" class="border-2 border-gray-300 rounded-md" />
+      {% endif %}
       <button type="submit" class="btn btn-primary rounded-md">Continue</button>
     </form>
   </div>

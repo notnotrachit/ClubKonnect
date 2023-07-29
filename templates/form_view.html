@@ -3,45 +3,28 @@
 {% block script %}
   <!-- Add this script tag in your HTML to include the JavaScript code -->
   <script>
-    const submit_button = document.getElementById('submit_form')
-    submit_button.addEventListener('click', (event) => {
-      event.preventDefault()
-      postFormData()
-    })
-    
-    async function postFormData() {
-      const form = document.getElementById('renderedForm')
-      const formData = new FormData(form)
-    
-      // Convert the FormData object to a plain JavaScript object
-      const formDataObject = {}
-      formData.forEach((value, key) => {
-        formDataObject[key] = value
+    function getSocial() {
+      var fdata = null;
+      fetch ("{% url 'user_social' %}")
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        social_connections_div = document.getElementById("social_connection")
+        github = data.github_connection
+        linkedin = data.linkedin_connection
+        let output= "Github Connected: "+github +"<br> Linkedin Connected: "+linkedin
+        social_connections_div.innerHTML = output     
+        fdata = data;
       })
-    
-      const jsonData = {
-        form_data: formDataObject
-      }
-    
-      const response = await fetch("{% url 'form_view' form_id=form.id %}", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(jsonData)
-      })
-      if (response.ok) {
-        const jsonResponse = await response.json()
-        console.log(jsonResponse)
-      } else {
-        console.log(response.status)
-      }
+
+      return fdata;
     }
+
   </script>
 {% endblock %}
 {% block main %}
   <h1>Rendered Form</h1>
-  <form id="renderedForm" method="post">
+  <form id="renderedForm" method="post" action="#">
     {% csrf_token %}
     <div id="fields" class="form-control">
       {% for i in form.fields.all %}
@@ -85,8 +68,18 @@
         </div>
       {% endfor %}
     </div>
+<div>
+<button type="button" class="btn btn-outline" onclick="getSocial()"> Get Social Connections </button>
+<div id="social_connection">
+
+</div>
+</div>
+
     <div>
       <button type="submit" class="btn btn-primary" id="submit_form">Submit Form</button>
     </div>
   </form>
+
+
+
 {% endblock %}

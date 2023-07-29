@@ -43,7 +43,9 @@ class Forms(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)
-    accepting_responses = models.BooleanField(default=False)
+    accepting_responses = models.BooleanField(default=True)
+    github_required = models.BooleanField(default=False)
+    linkedin_required = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.name

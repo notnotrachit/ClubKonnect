@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from allauth.socialaccount.models import SocialApp, SocialAppManager, SocialAccount
 import os
 
 
@@ -25,7 +26,9 @@ def new_form(request, form_id=None):
                 field=field['name'],
                 field_type=field['type'],
                 description=field['description'],
-                is_required=field['is_required']
+                is_required=field['is_required'],
+                github_required=field['github_required'],
+                linkedin_required=field['linkedin_required'],
             )
             if field['type'] == 'select' or field['type'] == 'radio' or field['type'] == 'checkbox':
                 for choice in field['options']:
@@ -41,7 +44,7 @@ def new_form(request, form_id=None):
             return redirect('form_view')
         return render(request, 'new_form.html', {'form': form})
 
-
+@login_required
 def form_view(request, form_id):
     if request.method == "GET":
         form = Forms.objects.get(id=form_id)
@@ -58,15 +61,24 @@ def form_view(request, form_id):
         for field in form.fields.all():
             if field.is_required and field.field not in data:
                 return JsonResponse({'success': False, 'error': f'{field.field} is required'})
+        
+        if form.github_required:
+                github_app = SocialApp.objects.filter(provider='github')
+                if len(github_app) > 0:
+                    github_account = SocialAccount.objects.filter(user=request.user, provider='github')
+                    if len(github_account) == 0:
+                        return JsonResponse({'success': False, 'error': 'Github is required'})
+        if form.linkedin_required:
+                linkedin_app = SocialApp.objects.filter(provider='linkedin_oauth2')
+                if len(linkedin_app) > 0:
+                    linkedin_account = SocialAccount.objects.filter(user=request.user, provider='linkedin_oauth2')
+                    if len(linkedin_account) == 0:
+                        return JsonResponse({'success': False, 'error': 'Linkedin is required'})
         entries.objects.create(
             form=form,
             user=request.user,
             data=data
         )
-        email_text = """
-        """
-        # send_mail("Thank You for applying",f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>", [request.user.email], fail_silently=False)
-
         html_message = render_to_string('email/form_submit.html', {'form': form, 'data': data})
         plain_message = strip_tags(html_message)
 
@@ -100,9 +112,11 @@ def create_form(request):
             is_published=data['is_public'],
             accepting_responses=data['accepting_responses']
         )
-        return redirect('new_form', form_id=new_form.id)
+        return redirect('edit_form_fields', form_id=new_form.id)
     else:
-        return render(request, 'create_form.html')
+        github_social_app = SocialApp.objects.filter(provider='github')
+        linkedin_social_app = SocialApp.objects.filter(provider='linkedin_oauth2')
+        return render(request, 'create_form.html', {'github_social_app': github_social_app, 'linkedin_social_app': linkedin_social_app})
     
 
 @superuser_required
@@ -189,3 +203,19 @@ def change_form_status(request, entry_id):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False})
+
+@login_required
+def user_social(request):
+    user = request.user
+    socials = SocialAccount.objects.filter(user=user)
+    github_connection = SocialAccount.objects.filter(user=user, provider='github')
+    linkedin_connection = SocialAccount.objects.filter(user=user, provider='linkedin_oauth2')
+    if len(github_connection) == 0:
+        github_connection = False
+    else:
+        github_connection = True
+    if len(linkedin_connection) == 0:
+        linkedin_connection = False
+    else:
+        linkedin_connection = True
+    return JsonResponse({'success': True, 'github_connection': github_connection, 'linkedin_connection': linkedin_connection})
