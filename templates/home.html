@@ -1,12 +1,13 @@
 {% extends "base.html" %} {% block main %}
 <div>
-  <h1 class="text-6xl">Recruitments</h1>
+  <h1 class="text-4xl text-primary font-bold">All open forms</h1>
   {% for form in all_forms %}
-  <div class="border border-gray-500 m-5 p-5">
-    <h2 class="text-4xl">{{ form.name }}</h2>
-    <p class="text-2xl">{{ form.description }}</p>
-    <p class="text-2xl">{{ form.created_at }}</p>
-    <a href="{% url 'form_view' form_id=form.id %}">Apply</a>
+  <div class="border-2 border-primary my-5 p-5 rounded-xl flex justify-between">
+    <div>
+      <h2 class="text-4xl font-semibold text-content">{{ form.name }}</h2>
+      <p class="text-2xl text-content">{{ form.description|linebreaks }}</p>
+    </div>
+    <a href="{% url 'form_view' form_id=form.id %}"><button class="btn btn-primary rounded-xl">Apply</button></a>
   </div>
   {% endfor %}
 </div>

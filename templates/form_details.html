@@ -1,13 +1,99 @@
-{% extends "base.html" %} {% block main %}
+{% extends "base.html" %} 
+{% block main %}
 <div>
-  <span class="text-3xl">{{ form.name }}</span><br />
-  <span class="text-3xl">{{ form.description }}</span><br />
-  <span class="text-3xl">Published: {{ form.is_published }}</span><br />
-  <span class="text-3xl"
-    >Accepting Responses: {{ form.accepting_responses }}</span
-  ><br />
+  <form method="post" class="form-control" id="myForm"> <!-- Add an 'id' attribute to the form -->
+    {% csrf_token %}
+    <label for="name" class="label label-text">Name:</label>
+    <input type="text" name="name" value="{{form.name}}" class="input input-bordered input-primary w-auto rounded-xl" onkeydown="show_save_button()"></input>
+    <label for="description">Description:</label>
+    <textarea name="description" class="textarea textarea-bordered textarea-primary w-auto rounded-xl" onkeydown="show_save_button()">{{form.description}}</textarea>
+    <label for="is_published" class="label w-56"><span class="label-text">Published:</span>
+    <input type="checkbox" name="is_published" value="{{form.is_published}}" class="checkbox checkbox-primary rounded" {% if form.is_published %} checked {% endif %} onchange="show_save_button()"></input>
+    </label>
+    <label for="accepting_responses" class="label w-56"><span class="label-text">Accepting Responses:</span>
+    <input type="checkbox" name="accepting_responses" value="{{form.accepting_responses}}" class="checkbox checkbox-primary rounded" {% if form.accepting_responses %} checked {% endif %} onchange="show_save_button()"></input>
+    </label>
+    <label for="github_required" class="label w-56"><span class="label-text">Github Required:</span>
+      <input type="checkbox" name="github_required" value="{{form.github_required}}" class="checkbox checkbox-primary rounded" {% if github %}{% if form.github_required %} checked {% endif %}{% else %}disabled{% endif %} onchange="show_save_button()"></input>
+    </label>
+    <label for="linkedin_required" class="label w-56"><span class="label-text">LinkedIn Required:</span>
+      <input type="checkbox" name="linkedin_required" value="{{form.linkedin_required}}" class="checkbox checkbox-primary rounded" {% if linkedin %}{% if form.linkedin_required %} checked {% endif %}{% else %}disabled{% endif %} onchange="show_save_button()"></input>
+    </label>
+    <!-- Change the button type to 'button' and add an 'id' attribute -->
+    <button type="button" id="submitForm" class="btn btn-success w-36 rounded-xl hidden"><span id="save_btn">Save Changes</span></button>
+  </form>
+  <br>
   <a href="{% url 'edit_form_fields' form_id=form.id %}">
-    <button class="btn btn-primary">View And Edit Fields</button>
+    <button class="btn btn-outline btn-accent rounded-xl">View And Edit Fields ➔</button>
   </a>
 </div>
+
+<script>
+  document.getElementById('submitForm').addEventListener('click', function(e) {
+    e.preventDefault(); 
+    const submit_button = document.getElementById('save_btn');
+    submit_button.classList.add('loading', 'loading-spinner', 'text-neutral');
+    const jsonData = {};
+    jsonData['name'] = document.getElementById('myForm').elements['name'].value;
+    jsonData['description'] = document.getElementById('myForm').elements['description'].value;
+    jsonData['is_published'] = document.getElementById('myForm').elements['is_published'].checked;
+    jsonData['accepting_responses'] = document.getElementById('myForm').elements['accepting_responses'].checked;
+    jsonData['github_required'] = document.getElementById('myForm').elements['github_required'].checked;
+    jsonData['linkedin_required'] = document.getElementById('myForm').elements['linkedin_required'].checked;
+    console.log(jsonData);
+
+    fetch("{% url 'form_details' form.id %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}',
+      },
+      body: JSON.stringify(jsonData),
+    })
+    .then(response => {
+      submit_button.classList.remove('loading', 'loading-spinner', 'text-neutral');
+      document.getElementById('submitForm').classList.add('hidden');
+      if (response.ok) {
+        console.log(response.json());
+        XSAlert({
+          title: "Form Updated!",
+          hideCancelButton: true,
+          closeOnOutsideClick: true,
+          closeWithESC: true
+        })
+      }
+      else
+      {
+        XSAlert({
+          title: "Error!",
+          message: "Something went wrong. Please try again. <br> Error: "+response.status+" "+response,
+          hideCancelButton: true,
+          closeOnOutsideClick: true,
+          closeWithESC: true
+        })
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      XSAlert({
+        title: "Error!",
+        message: "Something went wrong. Please try again. <br> Error: "+error,
+        hideCancelButton: true,
+        closeOnOutsideClick: true,
+        closeWithESC: true
+      })
+    });
+  });
+
+  function show_save_button(){
+    save_button = document.getElementById('submitForm');
+    if (save_button.classList.contains('hidden')){
+      save_button.classList.remove('hidden');
+    }
+
+  }
+</script>
+
 {% endblock main %}
+
+

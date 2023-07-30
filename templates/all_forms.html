@@ -1,19 +1,30 @@
 {% extends 'base.html' %}
 {% block main %}
   <div>
-    <span class="text-4xl">All forms</span>
+    <span class="text-4xl text-base-content">All forms</span>
 
     {% for form in forms %}
-      <div>
-        <span>{{ form.name }}</span>
-        <span>{{ form.description }}</span>
-        Published: {{ form.is_published }}
-        Accepting responses: {{ form.accepting_responses }}
-        <a href="{% url 'form_details' form.id %}">Details</a>
-        <a href="{% url 'form_view' form.id %}">View</a>
+      <div class="border border-primary rounded-xl my-5 p-3 bg-base-300">
+        <div class="flex justify-between">
+          <div>
+            <span class="text-3xl font-bold">{{ form.name }}</span><br/>
+            <span><span class="underline italic">Description:</span>{{ form.description|linebreaks }}</span><br/>
+          </div>
+          <div class="text-sm">
+            Published: {% if form.is_published %}✔️{% else %}❌{% endif %} <br/>
+            Accepting responses: {% if form.accepting_responses %}✔️{% else %}❌{% endif %}<br/>
+            GitHub Required: {% if form.github_required %}✔️{% else %}❌{% endif %}<br/>
+            LinkedIn Required: {% if form.linkedin_required %}✔️{% else %}❌{% endif %}<br/>
+            Responses: {{ form.entry_count }}<br/>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <a href="{% url 'form_details' form.id %}" class="btn btn-accent rounded-xl">Edit</a><br/>
+          <a href="{% url 'form_view' form.id %}" class="btn btn-accent rounded-xl" target="_blank">View 🡕</a>
+        </div>
       </div>
     {% endfor %}
 
-    <a class="p-3 btn btn-primary" href="/create_form/">New form</a>
+    <a class="p-3 btn btn-primary rounded-xl" href="/create_form/">New form</a>
   </div>
 {% endblock %}

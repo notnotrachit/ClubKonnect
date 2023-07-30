@@ -91,6 +91,9 @@ def form_view(request, form_id):
 @superuser_required
 def all_forms(request):
     forms = Forms.objects.all()
+    for i in forms:
+        entry_count = entries.objects.filter(form=i).count()
+        i.entry_count = entry_count
     return render(request, 'all_forms.html', {'forms': forms})
 
 @superuser_required
@@ -121,8 +124,33 @@ def create_form(request):
 
 @superuser_required
 def form_detail(request, form_id):
-    form = Forms.objects.get(id=form_id)
-    return render(request, 'form_details.html', {'form': form})
+    github_app = SocialApp.objects.filter(provider='github')
+    linkedin_app = SocialApp.objects.filter(provider='linkedin_oauth2')
+    if len(github_app) > 0:
+        github = True
+    else:
+        github = False
+    if len(linkedin_app) > 0:
+        linkedin = True
+    else:
+        linkedin = False
+    if request.method == 'POST':
+        data = request.body
+        data = json.loads(data)
+        form = Forms.objects.get(id=form_id)
+        form.is_published = data['is_published']
+        form.accepting_responses = data['accepting_responses']
+        if github:
+            form.github_required = data['github_required']
+        if linkedin:
+            form.linkedin_required = data['linkedin_required']
+        form.name = data['name']
+        form.description = data['description']
+        form.save()
+        return JsonResponse({'success': True})
+    else:
+        form = Forms.objects.get(id=form_id)
+        return render(request, 'form_details.html', {'form': form, 'github': github, 'linkedin': linkedin})
 
 @superuser_required
 def edit_form_fields(request, form_id):
@@ -162,7 +190,6 @@ def edit_form_fields(request, form_id):
 
 def home(request):
     all_forms = Forms.objects.filter(is_published=True)
-    print(all_forms)
     return render(request, 'home.html', {'all_forms': all_forms})
 
 @superuser_required
