@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block head_title %}Edit Form{% endblock head_title %}
 
  {% block script %}
 <script>
@@ -137,6 +138,10 @@ function addOption(button) {
 
   function sendFormData() {
     // e.preventDefault()
+    save_btn = document.getElementById("save_button");
+    save_btn.disabled = true;
+    save_btn_txt = document.getElementById("save_button_txt");
+    save_btn_txt.classList.add("loading", "loading-spinner");
     const formFields = document.querySelectorAll("#fields");
     console.log(formFields);
     const formData = Array.from(formFields).map((fieldDiv) => {
@@ -157,7 +162,6 @@ function addOption(button) {
         const options = fieldDiv.querySelectorAll('input[name="options"]');
         fieldData.options = Array.from(options).map((option) => option.value);
       }
-
       return fieldData;
     });
 
@@ -165,7 +169,7 @@ function addOption(button) {
     console.log(jsonData);
 
     // Replace 'YOUR_ENDPOINT_URL' with your actual endpoint URL
-    const endpointUrl = "/edit_form_fields/{{ form.id }}/";
+    const endpointUrl = "{% url 'edit_form_fields' form.id %}";
 
     fetch(endpointUrl, {
       method: "POST",
@@ -179,7 +183,19 @@ function addOption(button) {
       .then((data) => {
         // Handle the response from the server if needed
         console.log(data);
-        window.location.href = "/all_forms/";
+        save_btn.disabled = false;
+        save_btn_txt.classList.remove("loading", "loading-spinner");
+        XSAlert({
+          title: "Form Updated!",
+          hideCancelButton: true,
+          closeOnOutsideClick: true,
+          closeWithESC: true,
+          okButtonText: "Back to Dashboard",
+        }).then((result) => {
+          if (result == 'ok' ) {
+            window.location.href = "{% url 'all_forms' %}";
+          }
+        });
       })
       .catch((error) => {
         // Handle any errors that occurred during the request
@@ -280,8 +296,8 @@ function addOption(button) {
     >
       Add Field
     </button>
-    <button type="button" class="btn btn-primary rounded-xl" onclick="sendFormData()">
-      Save Form
+    <button type="button" class="btn btn-primary rounded-xl" onclick="sendFormData()" id="save_button">
+      <span id="save_button_txt">Save Form</span>
     </button>
   </div>
     </div>

@@ -170,7 +170,8 @@ def edit_form_fields(request, form_id):
                 field=field['name'],
                 field_type=field['type'],
                 description=field['description'],
-                is_required=field['is_required']
+                is_required=field['is_required'],
+                placeholder=field['placeholder'],
             )
             if field['type'] == 'select' or field['type'] == 'radio' or field['type'] == 'checkbox':
                 for choice in field['options']:
@@ -181,12 +182,8 @@ def edit_form_fields(request, form_id):
             form.fields.add(field_obj)
         return JsonResponse({'success': True})
     else:
-        form = Forms.objects.get(id=form_id)       
-
+        form = Forms.objects.get(id=form_id)
         return render(request, 'edit_form_fields.html', {'form': form})
-    
-
-
 
 def home(request):
     all_forms = Forms.objects.filter(is_published=True)
