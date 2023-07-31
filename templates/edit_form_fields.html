@@ -41,7 +41,6 @@ function addInputField() {
                               onchange="changeFieldType(this)">
                           <option value="text" selected>Text</option>
                           <option value="number">Number</option>
-                          <option value="date">Date</option>
                           <option value="email">Email</option>
                           <option value="password">Password</option>
                           <option value="textarea">Textarea</option>
@@ -256,7 +255,6 @@ function addOption(button) {
                               onchange="changeFieldType(this)">
                           <option value="text">Text</option>
                           <option value="number" {% if field.field_type == 'number' %}selected{% endif %}>Number</option>
-                          <option value="date">Date</option>
                           <option value="email" {% if field.field_type == 'email' %}selected{% endif %}>Email</option>
                           <option value="password" {% if field.field_type == 'password' %}selected{% endif %}>Password</option>
                           <option value="textarea" {% if field.field_type == 'textarea' %}selected{% endif %}>Textarea</option>

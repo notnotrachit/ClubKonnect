@@ -16,54 +16,53 @@
         social_connections_div.innerHTML = output     
         fdata = data;
       })
-
       return fdata;
     }
 
   </script>
 {% endblock %}
 {% block main %}
-  <h1>Rendered Form</h1>
-  <form id="renderedForm" method="post" action="#">
+  <h1 class="text-4xl font-bold">{{ form.name }}</h1>
+  <p class="text-2xl">{{ form.description }}</p>
+  <form id="renderedForm" method="post" action="#" class="my-10">
     {% csrf_token %}
     <div id="fields" class="form-control">
       {% for i in form.fields.all %}
-        <div class="form-group">
-          <label for="{{ i }}">{{ i }}</label>
+        <div class="">
+          <label for="{{ i }}" class="label justify-start text-xl">{{ i }}{% if i.is_required %}<span class="text-red-500 mx-5">*</span>{% endif %}</label>
+          {% if i.description %}
+            <p class="help-text">{{ i.description }}</p>
+          {% endif %}
           {% if i.field_type == 'text' %}
-            <input type="text" class="f" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" {% if i.is_required %}required{% endif %}/>
+            <input type="text" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'textarea' %}
-            <textarea id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" {% if i.is_required %}required{% endif %}></textarea>
+            <textarea id="{{ i }}" class="textarea textarea-primary rounded-xl" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}></textarea>
             {% elif i.field_type == 'select' %}
-            <select id="{{ i }}" name="{{ i }}" {% if i.is_required %}required{% endif %}>
+            <select id="{{ i }}" name="{{ i }}" class="select select-primary rounded-xl select-sm" {% if i.is_required %}required{% endif %}>
               {% for j in i.choices.all %}
                 <option value="{{ j }}">{{ j }}</option>
               {% endfor %}
             </select>
-            {% elif i.field_type == 'radio' %} <div class="m-5 p-5"> {% for j in i.choices.all %}
-                <div class="flex gap-4">
-                <label>
-                <input type="radio" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
-                  {{ j }}</label>
-                </div>
+            {% elif i.field_type == 'radio' %} <div class=""> {% for j in i.choices.all %}
+
+                <label class="label cursor-pointer flex justify-start gap-4">
+                <input class="radio radio-primary" type="radio" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
+                  <span class="label-text">{{ j }}</span>
+                </label>
               
             {% endfor %} </div> {% elif i.field_type == 'checkbox' %}
             {% for j in i.choices.all %}
-              <div class="flex gap-4 m-5">
-                <label class="flex gap-4">{{ j }}
-
-                <input type="checkbox" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
-
+                <label class="flex gap-4 cursor-pointer label w-96">{{ j }}
+                <input type="checkbox" class="checkbox rounded checkbox-primary" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
                 </label>
-              </div>
             {% endfor %} {% elif i.field_type == 'email' %}
-            <input type="email" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
+            <input type="email" class="input rounded-xl input-primary" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
             {% elif i.field_type == 'password' %}
-            <input type="password" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
+            <input type="password" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
             {% elif i.field_type == 'number' %}
-            <input type="number" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
+            <input type="number" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
             {% elif i.field_type == 'url' %}
-            <input type="url" id="{{ i }}" name="{{ i }}" placeholder="{{ i }}" />
+            <input type="url" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
           {% endif %}
         </div>
       {% endfor %}
@@ -71,7 +70,6 @@
 <div>
 <button type="button" class="btn btn-outline" onclick="getSocial()"> Get Social Connections </button>
 <div id="social_connection">
-
 </div>
 </div>
 
