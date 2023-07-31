@@ -3,25 +3,25 @@
 {% block main %}
   <div>
     <span class="text-5xl">Create a new form</span>
-    <form method="POST">
+    <form method="POST" class="form-control">
       {% csrf_token %}
-      <label>Form name</label>
-      <input type="text" name="name" placeholder="Form name" class="border-2 border-gray-300 rounded-md" />
-      <label>Form description</label>
-      <input type="text" name="description" placeholder="Form description" class="border-2 border-gray-300 rounded-md" />
-      <label>Public</label>
-      <input type="checkbox" name="is_public" class="border-2 border-gray-300 rounded-md" />
-      <label>Accepting Responses</label>
-      <input type="checkbox" name="accepting_responses" class="border-2 border-gray-300 rounded-md" />
-      {% if github_social_app %}
-      <label>Require GitHub?</label>
-      <input type="checkbox" name="github_required" class="border-2 border-gray-300 rounded-md" />
-      {% endif %}
-      {% if linkedin_social_app %}
-      <label>Require Linkedin?</label>
-      <input type="checkbox" name="linkedin_required" class="border-2 border-gray-300 rounded-md" />
-      {% endif %}
-      <button type="submit" class="btn btn-primary rounded-md">Continue</button>
+    <label for="name" class="label label-text">Name:</label>
+    <input type="text" name="name" class="input input-bordered input-primary w-auto rounded-xl" required></input>
+    <label for="description">Description:</label>
+    <textarea name="description" class="textarea textarea-bordered textarea-primary w-auto rounded-xl" required></textarea>
+    <label for="is_published" class="label w-56"><span class="label-text">Published:</span>
+    <input type="checkbox" name="is_published" class="checkbox checkbox-primary rounded"></input>
+    </label>
+    <label for="accepting_responses" class="label w-56"><span class="label-text">Accepting Responses:</span>
+    <input type="checkbox" name="accepting_responses" class="checkbox checkbox-primary rounded"></input>
+    </label>
+    <label for="github_required" class="label w-56"><span class="label-text">Github Required:</span>
+      <input type="checkbox" name="github_required" class="checkbox checkbox-primary rounded" {% if github %}{% else %}disabled{% endif %}></input>
+    </label>
+    <label for="linkedin_required" class="label w-56"><span class="label-text">LinkedIn Required:</span>
+      <input type="checkbox" name="linkedin_required" class="checkbox checkbox-primary rounded" {% if linkedin %}{% else %}disabled{% endif %}></input>
+    </label>
+      <button type="submit" class="btn btn-primary rounded-md w-72">Continue</button>
     </form>
   </div>
 {% endblock %}

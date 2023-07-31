@@ -100,26 +100,44 @@ def all_forms(request):
 def create_form(request):
     if request.method == 'POST':
         data = request.POST.dict()
-
-        if 'is_public' in data and data['is_public'] == 'on':
-            data['is_public'] = True
+        print(data)
+        if 'is_published' in data and data['is_published'] == 'on':
+            data['is_published'] = True
         else:
-            data['is_public'] = False
+            data['is_published'] = False
         if 'accepting_responses' in data and data['accepting_responses'] == 'on':
             data['accepting_responses'] = True
         else:
             data['accepting_responses'] = False
+        if 'github_required' in data and data['github_required'] == 'on':
+            data['github_required'] = True
+        else:
+            data['github_required'] = False
+        if 'linkedin_required' in data and data['linkedin_required'] == 'on':
+            data['linkedin_required'] = True
+        else:
+            data['linkedin_required'] = False
         new_form = Forms.objects.create(
             name=data['name'],
             description=data['description'],
-            is_published=data['is_public'],
-            accepting_responses=data['accepting_responses']
+            is_published=data['is_published'],
+            accepting_responses=data['accepting_responses'],
+            github_required=data['github_required'],
+            linkedin_required=data['linkedin_required'],
         )
         return redirect('edit_form_fields', form_id=new_form.id)
     else:
         github_social_app = SocialApp.objects.filter(provider='github')
         linkedin_social_app = SocialApp.objects.filter(provider='linkedin_oauth2')
-        return render(request, 'create_form.html', {'github_social_app': github_social_app, 'linkedin_social_app': linkedin_social_app})
+        if len(github_social_app) > 0:
+            github = True
+        else:
+            github = False
+        if len(linkedin_social_app) > 0:
+            linkedin = True
+        else:
+            linkedin = False
+        return render(request, 'create_form.html', {'github': github, 'linkedin': linkedin})
     
 
 @superuser_required
