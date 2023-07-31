@@ -5,9 +5,9 @@
 <script>
 function addInputField() {
   var new_field_div = document.createElement("div");
+  new_field_div.classList.add("border","border-gray-300", "rounded-md", "p-5", "m-2", "flex", "gap-2", "justify-between")
+  new_field_div.id="fields"
   new_field_div.innerHTML = `
-                <div id="fields"
-                     class="border border-gray-300 rounded-md p-5 m-2 flex gap-2 justify-between">
                                          <div class="reorder-buttons flex flex-col gap-4">
                         <button type="button"
                                 class="btn btn-secondary btn-sm rounded font-bold"
@@ -52,9 +52,6 @@ function addInputField() {
                       </select>
                     </div>
                     <button type="button" class="btn btn-error btn-sm rounded justify-self-end" onclick="deleteField(this)">Delete</button>
-
-
-                </div>
   `;
 
   // Append the new field before the "Add Field" button
@@ -122,7 +119,9 @@ function addOption(button) {
 
   function moveFieldDown(button) {
     const fieldDiv = button.closest(".border");
+    console.log(fieldDiv);
     const nextFieldDiv = fieldDiv.nextElementSibling;
+    console.log(nextFieldDiv);
     if (nextFieldDiv) {
       fieldDiv.parentNode.insertBefore(nextFieldDiv, fieldDiv);
       updateFieldIndexes();
