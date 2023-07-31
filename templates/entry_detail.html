@@ -43,50 +43,70 @@
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      document.querySelector("#present_status").innerText = data.status;
-    }
+      document.querySelector("#present_status").innerText = data.new_status;
+    })
     ;
   }
 </script>
 {% endblock script %} {% block main %} {% load get_value_by_key %}
 <div>
-  <span class="text-3xl bold">{{ entry.user }} - </span>
-  <span class="text-xl">{{ entry.form }}</span><br />
-
+  <span class="text-3xl bold">{{ entry.user }}</span><br/>
+  <span class="text-xl">Form: {{ entry.form }}</span><br />
+</div>
+  <div class="overflow-x-auto">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
   {% for field in entry.form.fields.all %} 
   {% with field_value=entry.data|get_value_by_key:field.field %} {% if field.field_type == 'checkbox' %}
-  <span>
-    {{ field.field }}:<br />
+
+    <td>{{ field.field }}:</td>
+    <td>
     <ul class="list-disc list-inside">
       {% for value in field_value %}
       <li>{{ value }}</li>
       {% endfor %}
     </ul>
-  </span>
+    </td>
   {% else %}
-  <span>{{ field.field }}: {{ field_value }}</span><br />
+    <tr>
+      <td>{{ field.field }}:</td>
+      <td>{{ field_value }}</td>
+    </tr>
   {% endif %} {% endwith %}
-</div>
 {% endfor %}
+    </tbody>
+  </table>
 
 <div>
-  Notes:
-  <textarea class="w-full" rows="10" oninput="onTextareaInput()">
+  <div class="text-xl font-semibold">Notes:</div>
+  <textarea class="w-full textarea textarea-primary rounded-xl" rows="10" oninput="onTextareaInput()">
 {{ entry.notes }}</textarea
   >
-  <button onclick="save_notes()">Save</button>
+  <div>
+  <button class="btn btn-primary rounded-xl" onclick="save_notes()">Save</button>
+  </div>
 </div>
 
-<div>
-  Current Status: <span id="present_status">{{ entry.status }}</span> <br />
-
-  Change Status
-  <select id="change_status">
-    <option value="pending">Pending</option>
-    <option value="approved">Approved</option>
-    <option value="rejected">Rejected</option>
+<div class="form-control">
+  <span class="font-bold">Current Status:</span> <span id="present_status">{{ entry.status }}</span> <br />
+  <div class="">
+    <label for="change_status">
+    <span class="label-text">Change Status</span>
+    </label><br/>
+  <select id="change_status" class="select select-primary select-sm rounded-xl">
+    <option value="pending" {% if entry.status  == 'pending' %}selected{% endif %}>Pending</option>
+    <option value="approved" {% if entry.status  == 'approved' %}selected{% endif %}>Approved</option>
+    <option value="rejected" {% if entry.status  == 'rejected' %}selected{% endif %}>Rejected</option>
   </select>
-  <button onclick="change_status()">Change</button>
+  <br/>
+  <button onclick="change_status()" class="btn btn-outline btn-primary rounded-xl my-2">Change</button>
+  </div>
 </div>
 
 {% endblock main %}

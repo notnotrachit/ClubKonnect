@@ -12,15 +12,82 @@
         social_connections_div = document.getElementById("social_connection")
         github = data.github_connection
         linkedin = data.linkedin_connection
-        let output= "Github Connected: "+github +"<br> Linkedin Connected: "+linkedin
-        social_connections_div.innerHTML = output     
-        fdata = data;
+        if (github){
+          git_checkbox = document.getElementById("github_checkbox")
+          git_checkbox.checked = true
+        }
+        else{
+          github_checkbox = document.getElementById("github_checkbox")
+          github_checkbox.checked = false
+        }
+        if (linkedin){
+          linkedin_checkbox = document.getElementById("linkedin_checkbox")
+          linkedin_checkbox.checked = true
+        }
+        else{
+          linkedin_checkbox = document.getElementById("linkedin_checkbox")
+          linkedin_checkbox.checked = false
+        }
       })
       return fdata;
     }
 
+    function submitForm() {
+      const formElement = document.getElementById("renderedForm");
+      const formData = new FormData(formElement);
+
+      fetch("{% url 'form_view' form.id %}", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        if (data.success) {
+          XSAlert({
+          title: "Form Submitted!",
+          hideCancelButton: true,
+          closeOnOutsideClick: true,
+          closeWithESC: true,
+          okButtonText: "Back to Homepage",
+        }).then((result) => {
+            window.location.href = "{% url 'home' %}";
+        });
+      } else {
+        if (data.social_connection_error) {
+          XSAlert({
+          title: "Form Submission Failed!",
+          message: data.error,
+          hideCancelButton: true,
+          closeOnOutsideClick: true,
+          closeWithESC: true,
+          okButtonText: "Account Connections ↗",
+        }).then((result) => {
+          if (result=='ok'){
+            window.open("{% url 'socialaccount_connections' %}", "_blank");
+          }
+        });
+        }
+        else {
+        XSAlert({
+          title: "Form Submission Failed!",
+          message: data.error,
+          hideCancelButton: true,
+          closeOnOutsideClick: true,
+          closeWithESC: true,
+          okButtonText: "ok",
+        })
+      }
+      }
+      }
+      )
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
   </script>
 {% endblock %}
+
 {% block main %}
   <h1 class="text-4xl font-bold">{{ form.name }}</h1>
   <p class="text-2xl">{{ form.description }}</p>
@@ -44,37 +111,57 @@
               {% endfor %}
             </select>
             {% elif i.field_type == 'radio' %} <div class=""> {% for j in i.choices.all %}
-
                 <label class="label cursor-pointer flex justify-start gap-4">
                 <input class="radio radio-primary" type="radio" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
                   <span class="label-text">{{ j }}</span>
-                </label>
-              
+                </label>              
             {% endfor %} </div> {% elif i.field_type == 'checkbox' %}
             {% for j in i.choices.all %}
                 <label class="flex gap-4 cursor-pointer label w-96">{{ j }}
                 <input type="checkbox" class="checkbox rounded checkbox-primary" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
                 </label>
             {% endfor %} {% elif i.field_type == 'email' %}
-            <input type="email" class="input rounded-xl input-primary" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
+            <input type="email" class="input rounded-xl input-primary" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'password' %}
-            <input type="password" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
+            <input type="password" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'number' %}
-            <input type="number" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
+            <input type="number" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'url' %}
-            <input type="url" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" />
+            <input type="url" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
           {% endif %}
         </div>
       {% endfor %}
     </div>
 <div>
-<button type="button" class="btn btn-outline" onclick="getSocial()"> Get Social Connections </button>
-<div id="social_connection">
+<p class="text-3xl underline"> Social Connections </p>
+<div class="flex justify-between">
+  <div>
+    <label class="label w-56">
+    <span class="label-text">GitHub Connected: </span>
+    <input type="checkbox" class="checkbox" name="github" id="github_checkbox" value="github" required {% if user_github %}checked{% endif %} disabled/>
+    </label>
+    <label class="label w-56">
+    <span class="label-text">LinkedIn Connected: </span>
+    <input type="checkbox" class="checkbox" name="linkedin" id="linkedin_checkbox" value="linkedin" required {% if user_linkedin %}checked{% endif %} disabled/>
+    </label>
+  </div>
+  <div>
+<button type="button" class="btn btn-outline btn-sm my-2 rounded-xl" onclick="getSocial()"> Refresh Social Connections </button>
+
+  </div>
 </div>
+{% if not user_github or not user_linkedin %}
+<p> Please connect your Github and Linkedin as its required in this form </p>
+You can connect your Github and Linkedin <a href="{% url 'socialaccount_connections' %}" class="underline italic">here</a>
+{% else %}
+<p> You have already connected your Github and Linkedin </p>
+{% endif %}
+
+
 </div>
 
     <div>
-      <button type="submit" class="btn btn-primary" id="submit_form">Submit Form</button>
+<button type="button" class="btn btn-primary rounded-xl" id="submit_form" onclick="submitForm()">Submit Form</button>
     </div>
   </form>
 

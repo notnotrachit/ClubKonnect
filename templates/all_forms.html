@@ -20,7 +20,8 @@
         </div>
         <div class="flex gap-2">
           <a href="{% url 'form_details' form.id %}" class="btn btn-accent rounded-xl">Edit</a><br/>
-          <a href="{% url 'form_view' form.id %}" class="btn btn-accent rounded-xl" target="_blank">View 🡕</a>
+          <a href="{% url 'form_view' form.id %}" class="btn btn-accent rounded-xl" target="_blank">Preview 🡕</a>
+          <a href="{% url 'form_entries' form.id %}" class="btn btn-accent rounded-xl">View Responses</a>
         </div>
       </div>
     {% endfor %}

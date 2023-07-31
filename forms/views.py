@@ -48,7 +48,21 @@ def new_form(request, form_id=None):
 def form_view(request, form_id):
     if request.method == "GET":
         form = Forms.objects.get(id=form_id)
-        return render(request, 'form_view.html', {'form': form})
+        user = request.user
+        if form.accepting_responses == False:
+            return render(request, 'form_view.html', {'form': form})
+        # if entries.objects.filter(form=form, user=user).count() > 0:
+        #     return redirect('home')
+        user_github = SocialAccount.objects.filter(user=user, provider='github')
+        user_linkedin = SocialAccount.objects.filter(user=user, provider='linkedin_oauth2')
+        github_connected = False
+        linkedin_connected = False
+        if len(user_github) > 0:
+            github_connected = True
+        if len(user_linkedin) > 0:
+            linkedin_connected = True
+        user_linkedin = SocialAccount.objects.filter(user=user, provider='linkedin_oauth2')
+        return render(request, 'form_view.html', {'form': form, 'user_github': github_connected, 'user_linkedin': linkedin_connected})
     elif request.method == "POST":
         data = {}
         for key in request.POST.keys():
@@ -58,22 +72,25 @@ def form_view(request, form_id):
                 else:
                     data[key] = request.POST.getlist(key)
         form = Forms.objects.get(id=form_id)
+        required_fields = ""
         for field in form.fields.all():
-            if field.is_required and field.field not in data:
-                return JsonResponse({'success': False, 'error': f'{field.field} is required'})
+            if field.is_required and ((field.field not in data) or (data[field.field] == '') ):
+                required_fields = required_fields + field.field + ', '
+        if len(required_fields) > 0:
+            return JsonResponse({'success': False, 'error': 'The following fields are required: ' + required_fields[:-2]})
         
         if form.github_required:
                 github_app = SocialApp.objects.filter(provider='github')
                 if len(github_app) > 0:
                     github_account = SocialAccount.objects.filter(user=request.user, provider='github')
                     if len(github_account) == 0:
-                        return JsonResponse({'success': False, 'error': 'Github is required'})
+                        return JsonResponse({'success': False, 'error': 'Github is required', 'social_connection_error': True})
         if form.linkedin_required:
                 linkedin_app = SocialApp.objects.filter(provider='linkedin_oauth2')
                 if len(linkedin_app) > 0:
                     linkedin_account = SocialAccount.objects.filter(user=request.user, provider='linkedin_oauth2')
                     if len(linkedin_account) == 0:
-                        return JsonResponse({'success': False, 'error': 'Linkedin is required'})
+                        return JsonResponse({'success': False, 'error': 'Linkedin is required', 'social_connection_error': True})
         entries.objects.create(
             form=form,
             user=request.user,
@@ -242,7 +259,7 @@ def change_form_status(request, entry_id):
         new_status = json.loads(request.body)['status']
         entry.status = new_status
         entry.save()
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'new_status': new_status})
     else:
         return JsonResponse({'success': False})
 

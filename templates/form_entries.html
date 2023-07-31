@@ -1,10 +1,8 @@
 {% extends 'base.html' %} {% block main %} {% load get_value_by_key %} 
 {% for entry in entries %}
 
-<div class="border border-gray-500 m-5 p-5">
-  <span class="text-3xl bold">{{ entry.user }} - </span>
-
-  <span class="text-xl">{{ entry.form }}</span><br />
+<div class="border border-gray-500 m-5 p-5 rounded-xl">
+  <span class="text-3xl bold">{{ entry.user }}</span><br />
 
   {% for field in entry.form.fields.all %} 
   {% with  field_value=entry.data|get_value_by_key:field.field %} 
@@ -23,7 +21,7 @@
   {% endif %} {% endwith %}
 
   {% endfor %}
-      <a href="{% url 'entry_detail' entry.id %}" class="btn btn-primary">View Entry</a>
+      <a href="{% url 'entry_detail' entry.id %}" class="btn btn-primary rounded-xl">View Entry</a>
 
 </div>
 {% endfor %} {% endblock main %}
