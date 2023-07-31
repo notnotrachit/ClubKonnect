@@ -46,13 +46,13 @@ def new_form(request, form_id=None):
 
 @login_required
 def form_view(request, form_id):
+    if entries.objects.filter(form=form, user=user).count() > 0:
+        return redirect('home')
     if request.method == "GET":
         form = Forms.objects.get(id=form_id)
         user = request.user
         if form.accepting_responses == False:
             return render(request, 'form_view.html', {'form': form})
-        # if entries.objects.filter(form=form, user=user).count() > 0:
-        #     return redirect('home')
         user_github = SocialAccount.objects.filter(user=user, provider='github')
         user_linkedin = SocialAccount.objects.filter(user=user, provider='linkedin_oauth2')
         github_connected = False
@@ -101,9 +101,6 @@ def form_view(request, form_id):
 
         send_mail("Thank You for applying", plain_message, f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>", [request.user.email], fail_silently=False, html_message=html_message)
         return JsonResponse({'success': True})
-
-
-        # return redirect('home')
 
 @superuser_required
 def all_forms(request):
@@ -222,6 +219,14 @@ def edit_form_fields(request, form_id):
 
 def home(request):
     all_forms = Forms.objects.filter(is_published=True)
+    if request.user.is_authenticated:
+        for i in all_forms:
+            entry = entries.objects.filter(form=i, user=request.user)
+            if len(entry) > 0:
+                i.applied = True
+                i.entry = entry[0]
+            else:
+                i.applied = False
     return render(request, 'home.html', {'all_forms': all_forms})
 
 @superuser_required
@@ -259,6 +264,15 @@ def change_form_status(request, entry_id):
         new_status = json.loads(request.body)['status']
         entry.status = new_status
         entry.save()
+        html_message = render_to_string('email/Status_update.html', {'user': request.user, 'new_status': new_status, 'form': entry.form})
+        plain_message = strip_tags(html_message)
+        send_mail(
+            'Status Update',
+            plain_message,
+            f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>",
+            [request.user.email],
+            html_message=html_message,
+        )
         return JsonResponse({'success': True, 'new_status': new_status})
     else:
         return JsonResponse({'success': False})

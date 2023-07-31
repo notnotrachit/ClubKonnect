@@ -6,6 +6,10 @@
   const typingDelay = 2000;
 
   function save_notes() {
+    save_btn = document.getElementById("notes_save_btn");
+    save_btn_txt = document.getElementById("save_btn_txt");
+    save_btn.disabled = true;
+    save_btn_txt.classList.add("loading", "loading-spinner");
     fetch("{% url 'edit_entry_notes' entry.id %}", {
       method: "POST",
       body: JSON.stringify({
@@ -18,7 +22,27 @@
     })
       .then((response) => response.json())
       .then((data) => {
+        save_btn.disabled = false;
+        save_btn_txt.classList.remove("loading", "loading-spinner");
         console.log(data);
+        if (data.success) {
+          XSAlert({
+            title: "Notes Saved",
+            message: "The notes have been saved successfully.",
+            hideCancelButton: true,
+            closeOnOutsideClick: true,
+            closeWithESC: true,
+          });
+        } else {
+          XSAlert({
+            title: "Error",
+            message:
+              "There was an error while saving the notes. Please try again later.",
+            hideCancelButton: true,
+            closeOnOutsideClick: true,
+            closeWithESC: true,
+          });
+        }
       });
   }
 
@@ -30,6 +54,10 @@
   }
 
   function change_status() {
+    change_status_btn = document.getElementById("change_status");
+    change_statuc_btn_txt = document.getElementById("change_status_txt");
+    change_status_btn.disabled = true;
+    change_statuc_btn_txt.classList.add("loading", "loading-spinner");
     fetch("{% url 'change_status' entry.id %}", {
       method: "POST",
       body: JSON.stringify({
@@ -42,10 +70,28 @@
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
+      change_status_btn.disabled = false;
+      change_statuc_btn_txt.classList.remove("loading", "loading-spinner");
+      if (data.success){
+      XSAlert({
+        title: "Entry Status Changed",
+        message: "The status of the entry has been changed successfully and the user has been notified.",
+        hideCancelButton: true,
+        closeOnOutsideClick: true,
+        closeWithESC: true,
+      })
       document.querySelector("#present_status").innerText = data.new_status;
+      }
+      else{
+        XSAlert({
+          title: "Error",
+          message: "There was an error while changing the status of the entry. Please try again later.",
+          hideCancelButton: true,
+          closeOnOutsideClick: true,
+          closeWithESC: true,
+        })
+      }
     })
-    ;
   }
 </script>
 {% endblock script %} {% block main %} {% load get_value_by_key %}
@@ -85,11 +131,10 @@
 
 <div>
   <div class="text-xl font-semibold">Notes:</div>
-  <textarea class="w-full textarea textarea-primary rounded-xl" rows="10" oninput="onTextareaInput()">
-{{ entry.notes }}</textarea
-  >
+  <textarea class="w-full textarea textarea-primary rounded-xl" rows="10">
+{{ entry.notes }}</textarea>
   <div>
-  <button class="btn btn-primary rounded-xl" onclick="save_notes()">Save</button>
+  <button class="btn btn-primary rounded-xl" onclick="save_notes()" id="notes_save_btn"><span id="save_btn_txt">Save</span></button>
   </div>
 </div>
 
@@ -105,7 +150,7 @@
     <option value="rejected" {% if entry.status  == 'rejected' %}selected{% endif %}>Rejected</option>
   </select>
   <br/>
-  <button onclick="change_status()" class="btn btn-outline btn-primary rounded-xl my-2">Change</button>
+  <button onclick="change_status()" class="btn btn-outline btn-primary rounded-xl my-2" id="change_status"><span id="change_status_txt">Change</span></button>
   </div>
 </div>
 

@@ -101,9 +101,9 @@
             <p class="help-text">{{ i.description }}</p>
           {% endif %}
           {% if i.field_type == 'text' %}
-            <input type="text" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="text" class="input input-primary rounded-xl w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'textarea' %}
-            <textarea id="{{ i }}" class="textarea textarea-primary rounded-xl" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}></textarea>
+            <textarea id="{{ i }}" class="textarea textarea-primary rounded-xl w-96" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}></textarea>
             {% elif i.field_type == 'select' %}
             <select id="{{ i }}" name="{{ i }}" class="select select-primary rounded-xl select-sm" {% if i.is_required %}required{% endif %}>
               {% for j in i.choices.all %}
@@ -121,13 +121,13 @@
                 <input type="checkbox" class="checkbox rounded checkbox-primary" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
                 </label>
             {% endfor %} {% elif i.field_type == 'email' %}
-            <input type="email" class="input rounded-xl input-primary" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="email" class="input rounded-xl input-primary w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'password' %}
             <input type="password" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'number' %}
-            <input type="number" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="number" class="input input-primary rounded-xl w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'url' %}
-            <input type="url" class="input input-primary rounded-xl" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="url" class="input input-primary rounded-xl w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
           {% endif %}
         </div>
       {% endfor %}
