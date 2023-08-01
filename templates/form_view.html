@@ -133,20 +133,26 @@
       {% endfor %}
     </div>
 <div>
+{% if form.github_required or form.linkedin_required %}
 <p class="text-3xl underline"> Social Connections </p>
 <div class="flex justify-between">
   <div>
+    {% if form.github_required %}
     <label class="label w-56">
     <span class="label-text">GitHub Connected: </span>
     <input type="checkbox" class="checkbox" name="github" id="github_checkbox" value="github" required {% if user_github %}checked{% endif %} disabled/>
     </label>
+    {% endif %}
+    {% if form.linkedin_required %}
     <label class="label w-56">
     <span class="label-text">LinkedIn Connected: </span>
     <input type="checkbox" class="checkbox" name="linkedin" id="linkedin_checkbox" value="linkedin" required {% if user_linkedin %}checked{% endif %} disabled/>
     </label>
+    {% endif %}
   </div>
   <div>
-<button type="button" class="btn btn-outline btn-sm my-2 rounded-xl" onclick="getSocial()"> Refresh Social Connections </button>
+  {% endif %}
+    <button type="button" class="btn btn-outline btn-sm my-2 rounded-xl" onclick="getSocial()"> Refresh Social Connections </button>
 
   </div>
 </div>
