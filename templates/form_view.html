@@ -151,7 +151,7 @@
     {% endif %}
   </div>
   <div>
-  {% endif %}
+  
     <button type="button" class="btn btn-outline btn-sm my-2 rounded-xl" onclick="getSocial()"> Refresh Social Connections </button>
 
   </div>
@@ -162,7 +162,7 @@ You can connect your Github and Linkedin <a href="{% url 'socialaccount_connecti
 {% else %}
 <p> You have already connected your Github and Linkedin </p>
 {% endif %}
-
+{% endif %}
 
 </div>
 
