@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block main %} {% load get_value_by_key %} 
+{% extends 'base.html' %} {% block main %} {% load get_value_by_key %} {% load is_list %}
 {% for entry in entries %}
 
 <div class="border border-gray-500 m-5 p-5 rounded-xl">
@@ -10,9 +10,15 @@
   <span
     >{{ field.field }}:<br />
     <ul class="list-disc list-inside">
+      {% with il=field_value|is_list %}
+      {% if il %}
       {% for value in field_value %}
       <li>{{ value }}</li>
       {% endfor %}
+      {% else %}
+      <li>{{ field_value }}</li>
+      {% endif %}
+      {% endwith %}
     </ul>
   </span>
 

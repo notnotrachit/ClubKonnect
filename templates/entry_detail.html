@@ -1,4 +1,6 @@
 {% extends 'base.html' %} {% block script %}
+{% load is_list %}
+
 <script>
   // Add the script here
   let typingTimer;
@@ -114,9 +116,15 @@
     <td>{{ field.field }}:</td>
     <td>
     <ul class="list-disc list-inside">
+      {% with il=field_value|is_list %}
+      {% if il %}
       {% for value in field_value %}
       <li>{{ value }}</li>
       {% endfor %}
+      {% else %}
+      <li>{{ field_value }}</li>
+      {% endif %}
+      {% endwith %}
     </ul>
     </td>
   {% else %}
