@@ -46,8 +46,11 @@ def new_form(request, form_id=None):
 
 @login_required
 def form_view(request, form_id):
-    if entries.objects.filter(form=form, user=user).count() > 0:
+    form = Forms.objects.get(id=form_id)
+    if entries.objects.filter(form=form, user=request.user).count() > 0:
         return redirect('home')
+    if request.user.is_superuser == False and form.accepting_responses == False:
+        return render(request, 'not_accepting_response.html')
     if request.method == "GET":
         form = Forms.objects.get(id=form_id)
         user = request.user
