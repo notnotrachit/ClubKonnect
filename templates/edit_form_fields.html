@@ -54,8 +54,9 @@ function addInputField() {
   `;
 
   // Append the new field before the "Add Field" button
-  const addButton = document.getElementById("add_field");
-  addButton.parentNode.insertBefore(new_field_div, addButton);
+  const all_fields_div = document.getElementById("all_fields");
+  all_fields_div.insertAdjacentElement("beforeend", new_field_div);
+  (new_field_div, addButton);
 }
 
 
@@ -110,6 +111,7 @@ function addOption(button) {
   function moveFieldUp(button) {
     const fieldDiv = button.closest(".border");
     const prevFieldDiv = fieldDiv.previousElementSibling;
+    console.log(prevFieldDiv);
     if (prevFieldDiv) {
       fieldDiv.parentNode.insertBefore(fieldDiv, prevFieldDiv);
       updateFieldIndexes();
@@ -121,7 +123,7 @@ function addOption(button) {
     console.log(fieldDiv);
     const nextFieldDiv = fieldDiv.nextElementSibling;
     console.log(nextFieldDiv);
-    if (nextFieldDiv) {
+    if (nextFieldDiv && nextFieldDiv.id != "add_field")  {
       fieldDiv.parentNode.insertBefore(nextFieldDiv, fieldDiv);
       updateFieldIndexes();
     }
@@ -284,7 +286,7 @@ function addOption(button) {
                 </div>
             {% endfor %}
         </div>
-          <div class="my-2">
+          
     <button
       type="button"
       id="add_field"
