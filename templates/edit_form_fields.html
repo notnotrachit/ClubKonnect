@@ -5,10 +5,10 @@
 <script>
 function addInputField() {
   var new_field_div = document.createElement("div");
-  new_field_div.classList.add("border","border-gray-300", "rounded-md", "p-5", "m-2", "flex", "gap-2", "justify-between")
+  new_field_div.classList.add("border","border-gray-300", "rounded-md", "p-5", "m-2", "flex", "gap-2", "justify-between", "flex-wrap")
   new_field_div.id="fields"
   new_field_div.innerHTML = `
-                                         <div class="reorder-buttons flex flex-col gap-4">
+                                         <div class="reorder-buttons flex md:flex-col gap-4">
                         <button type="button"
                                 class="btn btn-secondary btn-sm rounded font-bold"
                                 onclick="moveFieldUp(this)">↑</button>
