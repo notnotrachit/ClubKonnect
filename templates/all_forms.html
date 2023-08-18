@@ -4,7 +4,7 @@
     <span class="text-4xl text-base-content">All forms</span>
 
     {% for form in forms %}
-      <div class="border border-primary rounded-xl my-5 p-3 bg-base-300">
+      <div class="border border-accent rounded my-6 p-8 bg-base-300">
         <div class="flex justify-between">
           <div>
             <span class="text-3xl font-bold">{{ form.name }}</span><br/>
@@ -26,6 +26,6 @@
       </div>
     {% endfor %}
 
-    <a class="p-3 btn btn-primary rounded-xl" href="/create_form/">New form</a>
+    <a class="px-6 py-2 btn btn-accent rounded mb-6" href="/create_form/">New form</a>
   </div>
 {% endblock %}
