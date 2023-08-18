@@ -267,13 +267,13 @@ def change_form_status(request, entry_id):
         new_status = json.loads(request.body)['status']
         entry.status = new_status
         entry.save()
-        html_message = render_to_string('email/Status_update.html', {'user': request.user, 'new_status': new_status, 'form': entry.form})
+        html_message = render_to_string('email/Status_update.html', {'user': entry.user, 'new_status': new_status, 'form': entry.form})
         plain_message = strip_tags(html_message)
         send_mail(
             'Status Update',
             plain_message,
             f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>",
-            [request.user.email],
+            [entry.user.email],
             html_message=html_message,
         )
         return JsonResponse({'success': True, 'new_status': new_status})
