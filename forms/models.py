@@ -79,7 +79,28 @@ class entries(models.Model):
         return f'{self.user.username} - {self.form.name}'
 
 
+class deleted_entries(models.Model):
+    form = models.ForeignKey(Forms, on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.user', on_delete=models.CASCADE)
+    data = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, null=True, default="")
+    status = models.CharField(
+        choices=(
+            ('pending', 'Pending'),
+            ('under_review', 'Under Review'),
+            ('in_progress', 'In Progress'),
+            ('shortlisted', 'Shortlisted'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected'),
+        ),
+        default='pending',
+        max_length=200
+    )
+    updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self) -> str:
+        return f'{self.user.username} - {self.form.name}'
 
 
 

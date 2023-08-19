@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import json
-from .models import Forms, Field, Choices, entries
+from .models import Forms, Field, Choices, entries, deleted_entries
 from Recruitments.decorators import superuser_required, staff_req
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -294,12 +294,17 @@ def save_notes(request, entry_id):
 @staff_req
 def form_entries(request, form_id):
     form = Forms.objects.get(id=form_id)
+    status_filter = request.GET.get('status', None)
     if request.user.is_superuser:
         entries_all = entries.objects.filter(form=form)
+        if status_filter:
+            entries_all = entries_all.filter(status=status_filter)
         return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
     else:
         if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0:
             entries_all = entries.objects.filter(form=form)
+            if status_filter:
+                entries_all = entries_all.filter(status=status_filter)
             return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
         else:
             return redirect('home')
@@ -387,3 +392,22 @@ def user_social(request):
     else:
         linkedin_connection = True
     return JsonResponse({'success': True, 'github_connection': github_connection, 'linkedin_connection': linkedin_connection})
+
+
+@staff_req
+def delete_entry(request, entry_id):
+    entry = entries.objects.get(id=entry_id)
+    form = entry.form
+    if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0 or request.user.is_superuser:
+        pass
+    else:
+        return redirect('home')
+    deleted_entries.objects.create(
+        form=form,
+        user=entry.user,
+        data=entry.data,
+        notes=entry.notes,
+        status=entry.status
+    )
+    entry.delete()
+    return JsonResponse({'success': True})
