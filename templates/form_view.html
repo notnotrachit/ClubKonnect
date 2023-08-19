@@ -101,33 +101,33 @@
             <p class="help-text">{{ i.description }}</p>
           {% endif %}
           {% if i.field_type == 'text' %}
-            <input type="text" class="input input-primary rounded-xl w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="text" class="input input-accent rounded w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'textarea' %}
-            <textarea id="{{ i }}" class="textarea textarea-primary rounded-xl w-96" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}></textarea>
+            <textarea id="{{ i }}" class="textarea textarea-accent rounded w-96" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}></textarea>
             {% elif i.field_type == 'select' %}
-            <select id="{{ i }}" name="{{ i }}" class="select select-primary rounded-xl select-sm" {% if i.is_required %}required{% endif %}>
+            <select id="{{ i }}" name="{{ i }}" class="select select-accent rounded select-sm" {% if i.is_required %}required{% endif %}>
               {% for j in i.choices.all %}
                 <option value="{{ j }}">{{ j }}</option>
               {% endfor %}
             </select>
             {% elif i.field_type == 'radio' %} <div class=""> {% for j in i.choices.all %}
                 <label class="label cursor-pointer flex justify-start gap-4">
-                <input class="radio radio-primary" type="radio" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
+                <input class="radio radio-accent" type="radio" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
                   <span class="label-text">{{ j }}</span>
                 </label>              
             {% endfor %} </div> {% elif i.field_type == 'checkbox' %}
             {% for j in i.choices.all %}
                 <label class="flex gap-4 cursor-pointer label w-96">{{ j }}
-                <input type="checkbox" class="checkbox rounded checkbox-primary" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
+                <input type="checkbox" class="checkbox rounded checkbox-accent" name="{{ i }}" id="{{ j }}" value="{{ j }}" />
                 </label>
             {% endfor %} {% elif i.field_type == 'email' %}
-            <input type="email" class="input rounded-xl input-primary w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="email" class="input rounded input-accent w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'password' %}
             <input type="password" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'number' %}
-            <input type="number" class="input input-primary rounded-xl w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="number" class="input input-accent rounded w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
             {% elif i.field_type == 'url' %}
-            <input type="url" class="input input-primary rounded-xl w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
+            <input type="url" class="input input-accent rounded w-96" id="{{ i }}" name="{{ i }}" placeholder="{{ i.placeholder }}" {% if i.is_required %}required{% endif %}/>
           {% endif %}
         </div>
       {% endfor %}
@@ -167,7 +167,7 @@ You can connect your Github and Linkedin <a href="{% url 'socialaccount_connecti
 </div>
 
     <div>
-<button type="button" class="btn btn-primary rounded-xl" id="submit_form" onclick="submitForm()">Submit Form</button>
+<button type="button" class="btn btn-primary mt-6 rounded-xl" id="submit_form" onclick="submitForm()">Submit Form</button>
     </div>
   </form>
 

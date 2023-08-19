@@ -150,26 +150,26 @@
 
 <div>
   <div class="text-xl font-semibold">Notes:</div>
-  <textarea class="w-full textarea textarea-primary rounded-xl" rows="10">
+  <textarea class="w-full textarea textarea-accent rounded mt-2" rows="10">
 {{ entry.notes }}</textarea>
   <div>
-  <button class="btn btn-primary rounded-xl" onclick="save_notes()" id="notes_save_btn"><span id="save_btn_txt">Save</span></button>
+  <button class="btn btn-accent rounded mt-4" onclick="save_notes()" id="notes_save_btn"><span id="save_btn_txt">Save</span></button>
   </div>
 </div>
 
 <div class="form-control">
-  <span class="font-bold">Current Status:</span> <span id="present_status">{{ entry.status }}</span> <br />
-  <div class="">
+  <span class="font-bold mt-4">Current Status:</span> <span id="present_status">{{ entry.status }}</span> <br />
+  <div class="mt-2">
     <label for="change_status">
     <span class="label-text">Change Status</span>
     </label><br/>
-  <select id="change_status" class="select select-primary select-sm rounded-xl">
+  <select id="change_status" class="select select-accent select-sm rounded">
     <option value="pending" {% if entry.status  == 'pending' %}selected{% endif %}>Pending</option>
     <option value="approved" {% if entry.status  == 'approved' %}selected{% endif %}>Approved</option>
     <option value="rejected" {% if entry.status  == 'rejected' %}selected{% endif %}>Rejected</option>
   </select>
   <br/>
-  <button onclick="change_status()" class="btn btn-outline btn-primary rounded-xl my-2" id="change_status"><span id="change_status_txt">Change</span></button>
+  <button onclick="change_status()" class="btn btn-outline btn-primary rounded my-4 my-2" id="change_status"><span id="change_status_txt">Change</span></button>
   </div>
 </div>
 
