@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json
 from .models import Forms, Field, Choices, entries
-from Recruitments.decorators import superuser_required
+from Recruitments.decorators import superuser_required, staff_req
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -105,16 +105,23 @@ def form_view(request, form_id):
         send_mail("Thank You for applying", plain_message, f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>", [request.user.email], fail_silently=False, html_message=html_message)
         return JsonResponse({'success': True})
 
-@superuser_required
+@staff_req
 def all_forms(request):
-    forms = Forms.objects.all()
+    if request.user.is_superuser:
+        forms = Forms.objects.all()
+    else:
+        forms = Forms.objects.filter(group_allowed__in=request.user.groups.all())
     for i in forms:
         entry_count = entries.objects.filter(form=i).count()
         i.entry_count = entry_count
     return render(request, 'all_forms.html', {'forms': forms})
 
-@superuser_required
+@staff_req
 def create_form(request):
+    if request.user.is_superuser:
+        pass
+    else:
+        return redirect('home')
     if request.method == 'POST':
         data = request.POST.dict()
         print(data)
@@ -157,8 +164,13 @@ def create_form(request):
         return render(request, 'create_form.html', {'github': github, 'linkedin': linkedin})
     
 
-@superuser_required
+@staff_req
 def form_detail(request, form_id):
+    form = Forms.objects.get(id=form_id)
+    if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0 or request.user.is_superuser:
+        pass
+    else:
+        return redirect('home')
     github_app = SocialApp.objects.filter(provider='github')
     linkedin_app = SocialApp.objects.filter(provider='linkedin_oauth2')
     if len(github_app) > 0:
@@ -172,7 +184,6 @@ def form_detail(request, form_id):
     if request.method == 'POST':
         data = request.body
         data = json.loads(data)
-        form = Forms.objects.get(id=form_id)
         form.is_published = data['is_published']
         form.accepting_responses = data['accepting_responses']
         if github:
@@ -187,8 +198,13 @@ def form_detail(request, form_id):
         form = Forms.objects.get(id=form_id)
         return render(request, 'form_details.html', {'form': form, 'github': github, 'linkedin': linkedin})
 
-@superuser_required
+@staff_req
 def edit_form_fields(request, form_id):
+    form = Forms.objects.get(id=form_id)
+    if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0 or request.user.is_superuser:
+        pass
+    else:
+        return redirect('home')
     if request.method == 'POST':
 
         data = json.loads(request.body)
@@ -232,20 +248,41 @@ def home(request):
                 i.applied = False
     return render(request, 'home.html', {'all_forms': all_forms})
 
-@superuser_required
+@staff_req
 def all_entries(request):
+    if request.user.is_superuser:
+        pass
+    else:
+        return redirect('home')
     entries_all = entries.objects.all()
     return render(request, 'all_entries.html', {'entries': entries_all})
 
-@superuser_required
+@staff_req
 def entry_detail(request, entry_id):
     entry = entries.objects.get(id=entry_id)
-    return render(request, 'entry_detail.html', {'entry': entry})
+    form = entry.form
+    if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0 or request.user.is_superuser:
+        pass
+    else:
+        return redirect('home')
+    user = entry.user
+    user_github = SocialAccount.objects.filter(user=user, provider='github')
+    user_linkedin = SocialAccount.objects.filter(user=user, provider='linkedin_oauth2')
+    if user_github:
+        user_github = user_github[0]
+    if user_linkedin:
+        user_linkedin = user_linkedin[0]
+    return render(request, 'entry_detail.html', {'entry': entry, 'user_github': user_github, 'user_linkedin': user_linkedin})
 
-@superuser_required
+@staff_req
 def save_notes(request, entry_id):
     if request.method == 'POST':
         entry = entries.objects.get(id=entry_id)
+        form = entry.form
+        if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0 or request.user.is_superuser:
+            pass
+        else:
+            return redirect('home')
         new_notes= json.loads(request.body)
         entry.notes = new_notes["notes"]
         entry.save()
@@ -253,17 +290,29 @@ def save_notes(request, entry_id):
     else:
         return JsonResponse({'success': False})
     
-@superuser_required
+@staff_req
 def form_entries(request, form_id):
     form = Forms.objects.get(id=form_id)
-    entries_all = entries.objects.filter(form=form)
-    return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
+    if request.user.is_superuser:
+        entries_all = entries.objects.filter(form=form)
+        return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
+    else:
+        if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0:
+            entries_all = entries.objects.filter(form=form)
+            return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
+        else:
+            return redirect('home')
 
 
-@superuser_required
+@staff_req
 def change_form_status(request, entry_id):
     if request.method == 'POST':
         entry = entries.objects.get(id=entry_id)
+        form = entry.form
+        if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0 or request.user.is_superuser:
+            pass
+        else:
+            return redirect('home')
         new_status = json.loads(request.body)['status']
         entry.status = new_status
         entry.save()
@@ -273,7 +322,7 @@ def change_form_status(request, entry_id):
             'Status Update',
             plain_message,
             f"Recruitments <{os.getenv('EMAIL_HOST_USER')}>",
-            [entry.user.email],
+            [entry.user.email], 
             html_message=html_message,
         )
         return JsonResponse({'success': True, 'new_status': new_status})

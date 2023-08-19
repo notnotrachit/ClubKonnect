@@ -133,7 +133,18 @@
       <td>{{ field_value }}</td>
     </tr>
   {% endif %} {% endwith %}
+
+
 {% endfor %}
+  <tr>
+    <td>Github</td>
+    <td><a href="https://github.com/{{ user_github.extra_data.login }}" class="hover:underline text-blue-400">{{ user_github.extra_data.login }}</a></td>
+  </tr>
+
+  <tr>
+    <td>Linkedin</td>
+    <td><a href="https://linkedin.com/in/{{ user_linkedin.extra_data.id }}" class="hover:underline text-blue-400">{{ user_linkedin.extra_data.id }}</a></td>
+  </tr>
     </tbody>
   </table>
 

@@ -25,7 +25,7 @@
         <a class="px-4 font-bold text-primary-content normal-case text-xl" href="/">ClubKonnect</a>
       </div>
       <div class="flex-none">
-        {% if request.user.is_superuser %}
+        {% if request.user.is_staff %}
         <a
         href="{% url 'all_forms' %}"
         class="btn btn-accent rounded-xl mr-3"

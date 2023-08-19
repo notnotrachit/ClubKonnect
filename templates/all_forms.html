@@ -26,6 +26,6 @@
       </div>
     {% endfor %}
 
-    <a class="p-3 btn btn-primary rounded-xl" href="/create_form/">New form</a>
+    {% if request.user.is_superuser %}<a class="p-3 btn btn-primary rounded-xl" href="/create_form/">New form</a>{% endif %}
   </div>
 {% endblock %}

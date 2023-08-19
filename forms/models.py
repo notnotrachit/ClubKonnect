@@ -1,4 +1,7 @@
 from django.db import models
+# from allauth.socialaccount.signals import pre_social_login
+# from django.dispatch import receiver
+# from allauth.socialaccount.models import SocialAccount
 
 class Choices(models.Model):
     choice = models.CharField(max_length=200)
@@ -44,6 +47,7 @@ class Forms(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)
     accepting_responses = models.BooleanField(default=True)
+    group_allowed = models.ManyToManyField('auth.Group', blank=True)
     github_required = models.BooleanField(default=False)
     linkedin_required = models.BooleanField(default=False)
 
@@ -73,3 +77,16 @@ class entries(models.Model):
 
     def __str__(self) -> str:
         return f'{self.user.username} - {self.form.name}'
+
+
+
+
+
+
+# @receiver(pre_social_login)
+# def pre_social_login(request, sociallogin, **kwargs):
+#     user = sociallogin.user
+#     if sociallogin.account.provider == "linkedin_oauth2":
+#         print("Linkedin")
+#         print(sociallogin)
+#         print(sociallogin.account.extra_data)
