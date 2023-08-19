@@ -234,26 +234,26 @@ function addOption(button) {
                       <input type="text"
                              name="name"
                              placeholder="Field Name"
-                             class="input input-primary w-72 rounded-xl"
+                             class="input input-accent w-72 rounded"
                              value="{{ field.field }}" />
                       <label for="description" class="label "><span class="label-text">Description:</span></label>
                       <input type="text"
                              name="description"
                              placeholder="Description"
-                             class="input input-primary w-72 rounded-xl"
+                             class="input input-accent w-72 rounded"
                              value="{{ field.description }}" />
                       <label for="placeholder" class="label "><span class="label-text">Placeholder:</span></label>
                       <input type="text"
                              name="placeholder"
                              placeholder="Placeholder"
-                             class="input input-primary w-72 rounded-xl"
+                             class="input input-accent w-72 rounded"
                              value="{{ field.placeholder }}" />
                           <label for="is_required" class="label w-56"><span class="label-text">Required:</span>
-                          <input type="checkbox" name="is_required" class="checkbox checkbox-primary rounded" {% if field.is_required == True %}checked{% endif %}/>
+                          <input type="checkbox" name="is_required" class="checkbox checkbox-accent rounded" {% if field.is_required == True %}checked{% endif %}/>
                           </label>
                       <label for="type" class="label "><span class="label-text">Field Type:</span></label>
                       <select name="type"
-                              class="select select-primary select-sm w-72 rounded-xl"
+                              class="select select-accent select-sm w-72 rounded"
                               onchange="changeFieldType(this)">
                           <option value="text">Text</option>
                           <option value="number" {% if field.field_type == 'number' %}selected{% endif %}>Number</option>
@@ -270,7 +270,7 @@ function addOption(button) {
                             <label for="options" class="label "><span class="label-text">Options:</span></label>
                             {% for choice in field.choices.all %}
                                     <div class="flex items-center my-1">
-                                        <input type="text" name="options" placeholder="Option" class="input input-primary input-sm w-72 rounded-xl" value="{{ choice }}">
+                                        <input type="text" name="options" placeholder="Option" class="input input-accent input-sm w-72 rounded" value="{{ choice }}">
                                         <button type="button" class="btn btn-secondary btn-sm ml-2 rounded-md font-bold" onclick="deleteOption(this)">-</button>
                                     </div>
                             {% endfor %}
@@ -280,7 +280,7 @@ function addOption(button) {
                           </div>
                       {% endif %}
                     </div>
-                    <button type="button" class="btn btn-error btn-sm rounded justify-self-end" onclick="deleteField(this)">Delete</button>
+                    <button type="button" class="btn btn-error btn-outline rounded justify-self-end" onclick="deleteField(this)">Delete</button>
 
 
                 </div>
@@ -290,12 +290,12 @@ function addOption(button) {
     <button
       type="button"
       id="add_field"
-      class="btn btn-primary rounded-xl"
+      class="btn btn-primary rounded my-4"
       onclick="addInputField()"
     >
       Add Field
     </button>
-    <button type="button" class="btn btn-primary rounded-xl" onclick="sendFormData()" id="save_button">
+    <button type="button" class="btn btn-primary rounded" onclick="sendFormData()" id="save_button">
       <span id="save_button_txt">Save Form</span>
     </button>
   </div>

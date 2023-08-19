@@ -6,7 +6,7 @@
 
   <span class="text-xl">{{ entry.form }}</span><br />
 
-    <a href="{% url 'entry_detail' entry.id %}" class="btn btn-primary">View Entry</a>
+    <a href="{% url 'entry_detail' entry.id %}" class="btn btn-primary btn-outline mt-4 rounded">View Entry</a>
   {% comment %} {% for field in entry.form.fields.all %} {% with
   field_value=entry.data|get_value_by_key:field.field %} {% if field.field_type
   == 'checkbox' %}
