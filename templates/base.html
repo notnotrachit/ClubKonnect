@@ -1,62 +1,55 @@
 <!DOCTYPE html>
-<html data-theme="cupcake">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>{% block head_title %}{% endblock %}</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.3.1/dist/full.css" rel="stylesheet" type="text/css" />
-    <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- XSAlert CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/frankeno/xsalert@main/src/themes/light-theme.css">
-    <!-- XAlert core JS -->
-    <script src="https://cdn.jsdelivr.net/gh/frankeno/xsalert@main/src/xsalert.js"></script>
-    {% block script %}
-    {% endblock %}
-  </head>
-  <body>
-    <script src="" async defer></script>
-    <div class="navbar bg-primary shadow-xl">
-      <div class="flex-1">
-        <a class="px-4 font-bold text-primary-content normal-case text-xl" href="/">ClubKonnect</a>
-      </div>
-      <div class="flex-none">
-        {% if request.user.is_superuser %}
-        <a
-        href="{% url 'all_forms' %}"
-        class="btn btn-accent rounded-xl mr-3"
-        >Dashboard</a>
-        {% endif %}
-        {% if request.user.is_authenticated %}
-        <a
-        href="{% url 'account_logout' %}"
-        class="btn btn-error rounded-xl "
-        >Logout</a>
-        {% else %}
-        <a
-        href="{% url 'account_login' %}"
-        class="btn btn-accent rounded-xl mr-3"
-        >Login</a>
-        <a
-        href="{% url 'account_signup' %}"
-        class="btn btn-accent rounded-xl"
-        >Sign Up</a>
-        {% endif %}
-      </div>
-    </div>
-    <div class="flex justify-center my-10">
-      <div class="w-11/12 md:w-1/2">
-    {% block main %}
-        
-    {% endblock %}
-      </div>
-    </div>
-    <div class="w-full p-2 text-center bg-primary fixed bottom-0">
-      <p class="text-primary-content">Made by <a href="https://www.rachitkhurana.tech/" target="_blank" class="italic underline">Rachit Khurana</a> with ❤️</p>
-    </div>
-  </body>
+<html data-theme="dark">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>{% block head_title %}{% endblock %}</title>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link href="https://cdn.jsdelivr.net/npm/daisyui@3.3.1/dist/full.css" rel="stylesheet" type="text/css" />
+		<script src="https://unpkg.com/htmx.org@1.9.3"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<!-- XSAlert CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/frankeno/xsalert@main/src/themes/light-theme.css" />
+		<!-- XAlert core JS -->
+		<script src="https://cdn.jsdelivr.net/gh/frankeno/xsalert@main/src/xsalert.js"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
+			rel="stylesheet" />
+		{% block script %} {% endblock %}
+	</head>
+	<body class="font-['Montserrat']">
+		<script src="" async defer></script>
+		<div class="navbar">
+			<div class="flex-1">
+				<a class="px-4 font-bold text-primary-content btn btn-ghost normal-case text-xl" href="/"
+					>ClubKonnect</a
+				>
+			</div>
+			<div class="flex-none">
+				{% if request.user.is_superuser %}
+				<a href="{% url 'all_forms' %}" class="btn btn-accent btn-outline mr-3 rounded">Dashboard</a>
+				{% endif %} {% if request.user.is_authenticated %}
+				<a href="{% url 'account_logout' %}" class="btn btn-error btn-outline rounded">Logout</a>
+				{% else %}
+				<a href="{% url 'account_login' %}" class="btn btn-accent btn-outline rounded mr-3">Login</a>
+				<a href="{% url 'account_signup' %}" class="btn btn-accent btn-outline rounded">Sign Up</a>
+				{% endif %}
+			</div>
+		</div>
+		<div class="flex justify-center my-10">
+			<div class="w-11/12 md:w-8/12">{% block main %} {% endblock %}</div>
+		</div>
+		<div class="w-full p-2 text-center bg-neutral fixed bottom-0">
+			<p class="text-primary-content">
+				Made by
+				<a href="https://www.rachitkhurana.tech/" target="_blank" class="italic underline">Rachit Khurana</a>
+				with ❤️
+			</p>
+		</div>
+	</body>
 </html>

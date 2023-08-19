@@ -1,23 +1,23 @@
 {% extends "base.html" %} {% block main %}
 <div>
-  <h1 class="text-4xl text-primary font-bold">All open forms</h1>
+  <h1 class="text-4xl text-accent font-bold">All open forms</h1>
   {% for form in all_forms %}
-  <div class="border-2 border-primary my-5 p-5 rounded-xl flex justify-between">
+  <div class="border border-accent my-5 p-5 rounded flex justify-between">
     <div>
-      <h2 class="text-4xl font-semibold text-content">{{ form.name }}</h2>
-      <p class="text-2xl text-content">{{ form.description|linebreaks }}</p>
+      <h2 class="text-3xl font-semibold text-content">{{ form.name }}</h2>
+      <p class="text-xl text-content">{{ form.description|linebreaks }}</p>
     </div>
     {% if request.user.is_authenticated %}
       {% if form.applied %}
       <div class="flex flex-col">
-        <button class="btn btn-primary rounded-xl justify-self-end" disabled>Already Applied</button>
+        <button class="btn btn-accent rounded justify-self-end" disabled>Already Applied</button>
         <p>Application Status: {{ form.entry.status }}</p>
       </div>
       {% else %}
-      <a href="{% url 'form_view' form_id=form.id %}"><button class="btn btn-primary rounded-xl">Apply</button></a>
+      <a href="{% url 'form_view' form_id=form.id %}"><button class="btn btn-accent rounded">Apply</button></a>
       {% endif %}
     {% else %}
-    <a href="{% url 'form_view' form_id=form.id %}"><button class="btn btn-primary rounded-xl">Apply</button></a>
+    <a href="{% url 'form_view' form_id=form.id %}"><button class="btn btn-accent rounded">Apply</button></a>
     {% endif %}
   </div>
   {% endfor %}
