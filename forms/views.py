@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from .models import Forms, Field, Choices, entries
 from Recruitments.decorators import superuser_required, staff_req
@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from allauth.socialaccount.models import SocialApp, SocialAppManager, SocialAccount
 import os
+import csv
 
 
 # Create your views here.
@@ -302,6 +303,48 @@ def form_entries(request, form_id):
             return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
         else:
             return redirect('home')
+
+
+@staff_req
+def form_entries_export(request, form_id):
+    form = Forms.objects.get(id=form_id)
+    if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0 or request.user.is_superuser:
+        pass
+    else:
+        return redirect('home')
+    entries_all = entries.objects.filter(form=form)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{form.name}.csv"'
+    writer = csv.writer(response)
+    header = ['User_Acc_Name', 'Email']
+    if form.github_required:
+        header.append('Github')
+    for field in form.fields.all():
+        header.append(field.field)
+    header.append('Status')
+    header.append('Notes')
+    writer.writerow(header)
+    for entry in entries_all:
+        row = []
+        row.append(entry.user.first_name + ' ' + entry.user.last_name)
+        row.append(entry.user.email)
+        if form.github_required:
+            row.append(entry.user.socialaccount_set.filter(provider='github')[0].extra_data['login'])
+        for field in form.fields.all():
+            if field.field in entry.data:
+                if field.field_type == 'checkbox':
+                    if type(entry.data[field.field]) == list:
+                        row.append(', '.join(entry.data[field.field]))
+                    else:
+                        row.append(entry.data[field.field])
+                else:
+                    row.append(entry.data[field.field])
+            else:
+                row.append('')
+        row.append(entry.status)
+        row.append(entry.notes)
+        writer.writerow(row)
+    return response
 
 
 @staff_req
