@@ -297,15 +297,18 @@ def form_entries(request, form_id):
     status_filter = request.GET.get('status', None)
     if request.user.is_superuser:
         entries_all = entries.objects.filter(form=form)
+        all_statuses = entries_all.values_list('status', flat=True).distinct()
         if status_filter:
             entries_all = entries_all.filter(status=status_filter)
-        return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
+        return render(request, 'form_entries.html', {'entries': entries_all, 'form': form, 'all_statuses': all_statuses, 'status_filter': status_filter})
     else:
         if form.group_allowed.filter(id__in=request.user.groups.all()).count() > 0:
             entries_all = entries.objects.filter(form=form)
+            all_statuses = entries_all.values_list('status', flat=True).distinct()
             if status_filter:
                 entries_all = entries_all.filter(status=status_filter)
-            return render(request, 'form_entries.html', {'entries': entries_all, 'form': form})
+            
+            return render(request, 'form_entries.html', {'entries': entries_all, 'form': form, 'all_statuses': all_statuses, 'status_filter': status_filter})
         else:
             return redirect('home')
 

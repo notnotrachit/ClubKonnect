@@ -1,4 +1,11 @@
 {% extends 'base.html' %} {% block main %} {% load get_value_by_key %} {% load is_list %}
+<details {% if status_filter %}open{% endif %}>
+  <summary>Filters</summary>
+  {% for status in all_statuses %}
+  <a href="{% url 'form_entries' form.id %}?status={{status}}" class="btn btn-primary {% if status_filter == status %}{% else %}btn-outline{% endif %} mt-4 rounded">{{ status }}</a>
+  {% endfor %}
+
+</details>
 {% for entry in entries %}
 
 <div class="border border-gray-500 m-5 p-5 rounded-xl">
