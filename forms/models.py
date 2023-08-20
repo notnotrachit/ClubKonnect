@@ -1,7 +1,7 @@
 from django.db import models
-# from allauth.socialaccount.signals import pre_social_login
+# from allauth.socialaccount.signals import social_account_added
 # from django.dispatch import receiver
-# from allauth.socialaccount.models import SocialAccount
+# from allauth.socialaccount.models import SocialAccount, SocialToken
 
 class Choices(models.Model):
     choice = models.CharField(max_length=200)
@@ -104,10 +104,3 @@ class deleted_entries(models.Model):
 
 
 
-# @receiver(pre_social_login)
-# def pre_social_login(request, sociallogin, **kwargs):
-#     user = sociallogin.user
-#     if sociallogin.account.provider == "linkedin_oauth2":
-#         print("Linkedin")
-#         print(sociallogin)
-#         print(sociallogin.account.extra_data)

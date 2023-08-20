@@ -410,4 +410,4 @@ def delete_entry(request, entry_id):
         status=entry.status
     )
     entry.delete()
-    return JsonResponse({'success': True})
+    return redirect(form_entries, form_id=form.id)

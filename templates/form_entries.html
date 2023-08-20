@@ -28,6 +28,7 @@
 
   {% endfor %}
       <a href="{% url 'entry_detail' entry.id %}" class="btn btn-primary btn-outline mt-4 rounded">View Entry</a>
+      <a href="{% url 'delete_entry' entry.id %}" class="btn btn-error btn-outline mt-4 rounded">Delete Entry</a>
 
 </div>
 {% endfor %} {% endblock main %}
